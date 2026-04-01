@@ -11,6 +11,10 @@ services:
     volumes:
       - ./app-angular:/app
       - /app/node_modules
+    networks:
+      - npm
+      - romaga-angular-container
+
 networks:
   romaga-angular-container:
     name: romaga-angular-container
