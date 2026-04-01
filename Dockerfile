@@ -1,4 +1,4 @@
-FROM node:20.10.0
+FROM node:22-slim
 RUN mkdir -p /app
 WORKDIR /app
 COPY ["app-angular/package.json", "app-angular/package-lock.json", "/app/"]
