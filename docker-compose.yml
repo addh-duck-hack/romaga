@@ -1,12 +1,19 @@
 version: "3.7"
 services:
-  angular-container:
+  romaga-angular-container:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: romaga_web
+    restart: always
     ports:
       - 103:4200
     volumes:
       - ./app-angular:/app
-      - /app/node_modules   
+      - /app/node_modules
+networks:
+  romaga-angular-container:
+    name: romaga-angular-container
+    driver: bridge
+  npm:
+    external: true
