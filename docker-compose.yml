@@ -1,4 +1,4 @@
-name: angular-project
+version: "3.7"
 services:
   angular-container:
     build:
