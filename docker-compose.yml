@@ -1,0 +1,12 @@
+name: angular-project
+services:
+  angular-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: romaga_web
+    ports:
+      - 103:4200
+    volumes:
+      - ./app-angular:/app
+      - /app/node_modules   
