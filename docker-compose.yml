@@ -7,10 +7,7 @@ services:
     container_name: romaga-angular-container
     restart: always
     ports:
-      - 103:4200
-    volumes:
-      - ./app-angular:/app
-      - /app/node_modules
+      - 103:80
     networks:
       - npm
       - romaga-angular-container
