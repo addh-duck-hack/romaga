@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "romaga": {
+    "app-angular": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -53,10 +53,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "romaga:build:production"
+              "buildTarget": "app-angular:build:production"
             },
             "development": {
-              "buildTarget": "romaga:build:development"
+              "buildTarget": "app-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
