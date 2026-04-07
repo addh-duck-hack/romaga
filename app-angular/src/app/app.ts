@@ -1,7 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { environment } from '@environments/environment.develop';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-root',
