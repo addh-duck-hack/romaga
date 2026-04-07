@@ -1,0 +1,12 @@
+<div class="flex items-center space-x-4 ml-6">
+  @for (item of socialItems; track item.id) {
+    <a
+    [href]="item.url"
+    [target]="item.newPage ? '_blank' : '_self'"
+    rel="noopener noreferrer"
+    class="text-gray-300 hover:text-white transition-colors"
+    title="{{ item.name }}">
+    <i class="{{ item.icon }} text-xl"></i>
+  </a>
+  }
+</div>

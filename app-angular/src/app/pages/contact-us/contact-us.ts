@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { Navbar } from 'src/app/shared/components/navbar/navbar';
 
 @Component({
   selector: 'app-contact-us',
-  imports: [],
+  imports: [Navbar],
   templateUrl: './contact-us.html',
   styleUrl: './contact-us.css',
 })
