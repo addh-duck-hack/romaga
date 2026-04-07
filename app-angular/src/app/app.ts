@@ -1,5 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { environment } from '@environments/environment.develop';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +10,9 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('app-angular');
+
+  constructor() {
+    const titleService = inject(Title);
+    titleService.setTitle(environment.companyName);
+  }
 }

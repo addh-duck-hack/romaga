@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Navbar } from '../../shared/navbar/navbar';
+import { Component } from '@angular/core';
+import { Navbar } from '../../shared/components/navbar/navbar';
 
 @Component({
-  selector: 'app-home',
+  selector: 'home',
   imports: [Navbar],
   templateUrl: './home.html',
-  styleUrls: ['./home.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './home.css'
 })
 export default class Home { }

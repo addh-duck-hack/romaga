@@ -1,3 +1,2 @@
-.selector-for-some-widget {
-  box-sizing: content-box;
-}
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
