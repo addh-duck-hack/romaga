@@ -5,10 +5,11 @@ import { SectionItem } from 'src/app/shared/interfaces/section-separator.interfa
 import { SectionSeparator } from 'src/app/shared/components/section-separator/section-separator';
 import { BlankSeparator } from 'src/app/shared/components/blank-separator/blank-separator';
 import { ServiceCards } from 'src/app/shared/components/service-cards/service-cards';
+import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 
 @Component({
   selector: 'home',
-  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards],
+  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards, MainFooter],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
