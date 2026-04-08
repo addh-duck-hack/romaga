@@ -11,6 +11,5 @@ import { SocialIcons } from './social-icons/social-icons';
   styleUrl: './navbar.css'
 })
 export class Navbar {
-  imageSrc = 'images/logo.png';
-
+  imageSrc = 'images/logo_opcaity.png';
 }

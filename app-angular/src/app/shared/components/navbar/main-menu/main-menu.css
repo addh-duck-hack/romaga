@@ -33,3 +33,16 @@
   display: block;
   white-space: nowrap;
 }
+
+.item-menu {
+  color: #575757;
+}
+
+.item-menu:hover {
+  color: #8C2626;
+  background-color: rgba(148, 163, 184, 0.2);
+}
+
+.item-menu-active{
+  background-color: #D7D7D9;
+}

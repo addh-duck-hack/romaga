@@ -1,3 +1,9 @@
 :host {
   display: block;
 }
+.social-icon{
+  color: #575757;
+}
+.social-icon:hover {
+  color: #8C2626;
+}
