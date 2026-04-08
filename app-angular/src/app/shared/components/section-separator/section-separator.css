@@ -1,3 +1,14 @@
 :host {
   display: block;
 }
+
+.slide {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.description-separator>h2, .description-separator>p {
+  text-align: center;
+  color: #D7D7D9;
+}
