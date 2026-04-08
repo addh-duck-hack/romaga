@@ -2,8 +2,8 @@ version: "3.7"
 services:
   romaga-angular-container:
     build:
-      context: ./app-angular
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./app-angular/Dockerfile
     container_name: romaga-angular-container
     restart: always
     ports:
