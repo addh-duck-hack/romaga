@@ -50,7 +50,6 @@ mongoose.connect(mongoGlobalUrl)
 const userRoutes = require("./routes/user.routes");
 const mailRoutes = require("./routes/mail.routes");
 const uploadRoutes = require("./routes/upload.routes");
-const storeConfigRoutes = require("./routes/storeConfig.routes");
 
 app.use(cors(corsOptions));
 app.use(
@@ -61,16 +60,16 @@ app.use(
     hsts: process.env.NODE_ENV === "production",
   })
 );
-app.use("/api/users", userRoutes);
-app.use("/api/mail", mailRoutes);
-app.use("/api/uploads", uploadRoutes);
-app.use("/api/store-config", storeConfigRoutes);
+app.use("/api/ds/users", userRoutes);
+app.use("/api/ds/mail", mailRoutes);
+app.use("/api/ds/uploads", uploadRoutes);
+
 // Servir la carpeta uploads como estática
 const uploadsDir = resolveUploadsDir();
 if (!uploadsDir) {
   throw new Error("No hay un directorio de uploads con permisos de escritura.");
 }
-app.use('/uploads', express.static(uploadsDir));
+app.use('/api/ds/uploads', express.static(uploadsDir));
 
 app.use((err, req, res, next) => {
   if (err?.message === "CORS_ORIGIN_NOT_ALLOWED") {
