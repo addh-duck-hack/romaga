@@ -3,18 +3,12 @@ const { verifyAccessToken } = require("../utils/jwt");
 
 const ROLES = Object.freeze({
   SUPER_ADMIN: "super_admin",
-  STORE_ADMIN: "store_admin",
-  CATALOG_MANAGER: "catalog_manager",
-  ORDER_MANAGER: "order_manager",
-  CUSTOMER: "customer",
+  CUSTOMER: "customer"
 });
 
 const ALLOWED_ROLES = Object.values(ROLES);
 const STAFF_ROLES = Object.freeze([
-  ROLES.SUPER_ADMIN,
-  ROLES.STORE_ADMIN,
-  ROLES.CATALOG_MANAGER,
-  ROLES.ORDER_MANAGER,
+  ROLES.SUPER_ADMIN
 ]);
 
 const isValidRole = (role) => ALLOWED_ROLES.includes(role);

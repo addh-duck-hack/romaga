@@ -42,7 +42,12 @@ const {
 router.post("/register", registerRateLimiter, validateRegisterPayload, async (req, res) => {
   try {
     // No aceptar role desde el cliente al registrar; forzar 'customer'
-    const { name, email, password } = req.body;
+    const { name, email, password, customerKey } = req.body;
+
+    // Validamos si el customerKey es válido
+    if (customerKey !== process.env.CUSTOMER_KEY) {
+      return sendError(res, 403, "INVALID_CUSTOMER_KEY", "Clave de cliente inválida.");
+    }
 
     // Verificar si el correo ya está registrado
     const existing = await User.findOne({ email });

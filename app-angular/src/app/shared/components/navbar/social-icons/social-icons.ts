@@ -13,6 +13,6 @@ export class SocialIcons {
     { id: 2, name: 'Twitter', icon: 'fab fa-twitter', url: 'https://twitter.com/romaga', newPage: true },
     { id: 3, name: 'LinkedIn', icon: 'fab fa-linkedin-in', url: 'https://www.linkedin.com/company/romaga', newPage: true },
     { id: 4, name: 'Instagram', icon: 'fab fa-instagram', url: 'https://www.instagram.com/romaga', newPage: true },
-    { id: 5, name: 'Login', icon: 'fa-solid fa-user', url: '/dashboard', newPage: false }
+    { id: 5, name: 'Login', icon: 'fa-solid fa-user', url: '/login', newPage: false }
   ]
 }
