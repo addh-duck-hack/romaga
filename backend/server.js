@@ -52,12 +52,12 @@ const userRoutes = require("./routes/user.routes");
 const mailRoutes = require("./routes/mail.routes");
 const uploadRoutes = require("./routes/upload.routes");
 
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
 app.use(
   helmet({
     // API-only backend: CSP se gestiona en frontends.
     contentSecurityPolicy: false,
-    crossOriginResourcePolicy: { policy: "cross-origin" },
+    //crossOriginResourcePolicy: { policy: "cross-origin" },
     hsts: process.env.NODE_ENV === "production",
   })
 );
@@ -72,12 +72,12 @@ if (!uploadsDir) {
 }
 app.use('/api/ds/uploads', express.static(uploadsDir));
 
-app.use((err, req, res, next) => {
-  if (err?.message === "CORS_ORIGIN_NOT_ALLOWED") {
-    return sendError(res, 403, "CORS_ORIGIN_NOT_ALLOWED", "Origen no permitido por la política CORS.");
-  }
-  return next(err);
-});
+// app.use((err, req, res, next) => {
+//   if (err?.message === "CORS_ORIGIN_NOT_ALLOWED") {
+//     return sendError(res, 403, "CORS_ORIGIN_NOT_ALLOWED", "Origen no permitido por la política CORS.");
+//   }
+//   return next(err);
+// });
 
 app.use((err, req, res, next) => {
   console.error("Unhandled server error:", err);
