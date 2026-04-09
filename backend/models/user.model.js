@@ -20,11 +20,12 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['super_admin', 'store_admin', 'catalog_manager', 'order_manager', 'customer'],
+    enum: ['super_admin', 'customer'],
     default: 'customer'
   },
   profileImage: {
     type: String, // Almacena la ruta de la imagen subida
+    default: '/user.png'
   },
   isVerified: {
     type: Boolean,

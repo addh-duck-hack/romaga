@@ -18,28 +18,29 @@ const mongoGlobalUrl = (process.env.MONGO_URL_GLOBAL || "").trim();
 if (!mongoGlobalUrl) {
   throw new Error("MONGO_URL_GLOBAL es obligatorio y no puede estar vacío.");
 }
-const configuredCorsOrigins = (process.env.CORS_ALLOWED_ORIGINS || "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+// Validaciones de CORS
+// const configuredCorsOrigins = (process.env.CORS_ALLOWED_ORIGINS || "")
+//   .split(",")
+//   .map((origin) => origin.trim())
+//   .filter(Boolean);
 
-if (configuredCorsOrigins.length === 0) {
-  throw new Error("CORS_ALLOWED_ORIGINS es obligatorio y no puede estar vacío.");
-}
+// if (configuredCorsOrigins.length === 0) {
+//   throw new Error("CORS_ALLOWED_ORIGINS es obligatorio y no puede estar vacío.");
+// }
 
-const allowedCorsOrigins = new Set(configuredCorsOrigins);
+// const allowedCorsOrigins = new Set(configuredCorsOrigins);
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Permite herramientas sin origen (curl/postman/server-to-server)
-    if (!origin) return callback(null, true);
-    if (allowedCorsOrigins.has(origin)) return callback(null, true);
-    return callback(new Error("CORS_ORIGIN_NOT_ALLOWED"));
-  },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 204,
-};
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     // Permite herramientas sin origen (curl/postman/server-to-server)
+//     if (!origin) return callback(null, true);
+//     if (allowedCorsOrigins.has(origin)) return callback(null, true);
+//     return callback(new Error("CORS_ORIGIN_NOT_ALLOWED"));
+//   },
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   optionsSuccessStatus: 204,
+// };
 
 // Conectar a MongoDB global (Modelo B)
 mongoose.connect(mongoGlobalUrl)

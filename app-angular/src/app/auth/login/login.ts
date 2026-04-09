@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { environment } from '@environments/environment';
+import { UserService } from 'src/app/services/user.service';
+import { User } from 'src/app/shared/interfaces/user.interface';
 
 @Component({
   selector: 'login',
@@ -9,6 +11,7 @@ import { environment } from '@environments/environment';
   styleUrl: './login.css'
 })
 export default class Login {
+  // Generales
   typeForm = signal('login');
   buttonText = signal('Iniciar sesión');
   title = signal('¡Hola!');
@@ -20,8 +23,12 @@ export default class Login {
   password = signal('');
   password2 = signal('');
   customerKey = signal('');
-  //Variable para manejar errores
+  // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
+
+  // Consumo de servicios
+  userService = inject(UserService)
+  userSession = signal<User>;
 
   changeForm(type: string) {
     this.typeForm.set(type);
@@ -118,9 +125,12 @@ export default class Login {
 
     // Si todas las validaciones pasaron, continuar con el registro
     console.log('Formulario válido, proceder con el registro');
+
+    // Cunsumir el servicio para registrar usuario
+
   }
 
-  loginUser(){
+  loginUser(): void {
     // Limpiar errores previos
     this.descriptionErrors.set([]);
     const errors: string[] = [];
@@ -149,6 +159,11 @@ export default class Login {
 
     // Si todas las validaciones pasaron, continuar con el login
     console.log('Formulario válido, proceder con el login');
+
+    // Cunsumir el servicio para registrar usuario
+    this.userService.loginNewSession(this.email(), this.password()).subscribe((response) => {
+      console.log(response)
+    });
   }
 
   restartPassword(){
