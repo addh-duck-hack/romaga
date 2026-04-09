@@ -8,9 +8,6 @@ services:
     restart: always
     ports:
       - 103:80
-    networks:
-      - npm
-      - romaga-angular-container
   romaga-services:
     build: ./backend
     ports:
@@ -18,10 +15,3 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-
-networks:
-  romaga-angular-container:
-    name: romaga-angular-container
-    driver: bridge
-  npm:
-    external: true
