@@ -26,6 +26,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/dashboard/dashboard')
   },
   {
+    path: 'users/verify',
+    loadComponent: () => import('./auth/validate-email/validate-email')
+  },
+  {
     path: '**',
     redirectTo: ''
   }
