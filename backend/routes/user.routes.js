@@ -125,13 +125,13 @@ router.get('/verify', async (req, res) => {
     if (!user) return sendError(res, 404, "USER_NOT_FOUND", "Usuario no encontrado");
 
     if (user.isVerified) {
-      return res.status(200).json({ message: 'Usuario ya verificado' });
+      return res.status(200).json({ message: 'Usuario ya verificado, puedes iniciar sesión' });
     }
 
     user.isVerified = true;
     await user.save();
 
-    res.status(200).json({ message: 'Usuario verificado correctamente' });
+    res.status(200).json({ message: 'Usuario verificado correctamente, ya puedes iniciar sesión' });
   } catch (err) {
     console.error('Error verificando token:', err);
     return sendError(res, 400, "VERIFICATION_TOKEN_INVALID_OR_EXPIRED", "Token inválido o expirado");

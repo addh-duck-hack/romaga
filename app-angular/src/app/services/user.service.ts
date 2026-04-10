@@ -68,4 +68,12 @@ export class UserService {
     };
     return this.http.post<UserResponse>(`${ this.env.urlbackend }/api/ds/users/register`,bodyRequest);
   }
+
+  validateEmail(token: string): Observable<UserResponse>{
+    return this.http.get<UserResponse>(`${ this.env.urlbackend }/api/ds/users/verify`, {
+      params:{
+        token: token
+      }
+    });
+  }
 }
