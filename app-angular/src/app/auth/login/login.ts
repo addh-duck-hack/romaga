@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/interfaces/user.interface';
@@ -25,14 +26,23 @@ export default class Login {
   customerKey = signal('');
   // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
+  descriptionSuccess = signal<string>('')
 
   // Consumo de servicios
   userService = inject(UserService)
+  router = inject(Router)
   userSession = signal<User>;
+
+  constructor(){
+    if(this.userService.isTokenValid()){
+      this.router.navigate(['/dashboard']);
+    }
+  }
 
   changeForm(type: string) {
     this.typeForm.set(type);
     this.descriptionErrors.set([]);
+    this.descriptionSuccess.set("");
     switch (type) {
       case 'login':
         this.title.set('¡Hola!');
@@ -70,7 +80,7 @@ export default class Login {
     }
   }
 
-  registerUser(){
+  registerUser(): void{
     // Limpiar errores previos
     this.descriptionErrors.set([]);
     const errors: string[] = [];
@@ -102,9 +112,9 @@ export default class Login {
       }
     }
 
-    // Validar que la password tenga al menos 5 caracteres
-    if (this.password() && this.password().length < 5) {
-      errors.push('La contraseña debe tener al menos 5 caracteres');
+    // Validar que la password tenga al menos 6 caracteres
+    if (this.password() && this.password().length < 6) {
+      errors.push('La contraseña debe tener al menos 6 caracteres');
     }
 
     //Validar que las contraseñas coincidan
@@ -127,7 +137,24 @@ export default class Login {
     console.log('Formulario válido, proceder con el registro');
 
     // Cunsumir el servicio para registrar usuario
-
+    this.userService.registerNewUser(this.name(),this.email(), this.password(), this.customerKey()).subscribe({
+      next: (response) => {
+        // Cuando el registro se hace de manera exitosa se limpia el formulario y se muestra mensaje del servicio
+        if (response.message){
+          this.descriptionSuccess.set(response.message);
+        }else{
+          this.descriptionSuccess.set("Usuario registrado con éxito. Revisa tu correo para verificar la cuenta.");
+        }
+        this.name.set("");
+        this.email.set("");
+        this.password.set("");
+        this.customerKey.set("");
+      },
+      error: (error: HttpErrorResponse) => {
+        // Mostrar el mensaje de error del servidor
+        this.descriptionErrors.set([error.error.error.message]);
+      }
+    });
   }
 
   loginUser(): void {
@@ -161,8 +188,17 @@ export default class Login {
     console.log('Formulario válido, proceder con el login');
 
     // Cunsumir el servicio para registrar usuario
-    this.userService.loginNewSession(this.email(), this.password()).subscribe((response) => {
-      console.log(response)
+    this.userService.loginNewSession(this.email(), this.password()).subscribe({
+      next: (response) => {
+        // Guardar la sesión del usuario
+        this.userService.saveSession(response);
+        this.descriptionSuccess.set(response.message);
+        // Redirigir al dashboard
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.descriptionErrors.set([error.error.error.message]);
+      }
     });
   }
 

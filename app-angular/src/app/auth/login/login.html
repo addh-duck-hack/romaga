@@ -130,6 +130,19 @@
           </div>
         </div>
       }
+      @if (descriptionSuccess() != '') {
+        <div class="max-w-4xl mx-auto mt-4">
+          <div class="bg-green-50 border-l-8 border-[#3B9C32]">
+            <div class="flex items-center">
+              <div class="p-2">
+                <div class="px-16">
+                  <li class="text-md font-bold text-green-800 text-sm">{{descriptionSuccess()}}</li>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
       <button
         type="button"
         (click)="submitForm()"
