@@ -202,7 +202,7 @@ export default class Login {
     });
   }
 
-  restartPassword(){
+  restartPassword(): void {
     // Limpiar errores previos
     this.descriptionErrors.set([]);
     const errors: string[] = [];
@@ -234,7 +234,17 @@ export default class Login {
       return;
     }
 
-    // Si todas las validaciones pasaron, continuar con el login
-    console.log('Formulario válido, proceder con el login');
+    // Si todas las validaciones pasaron, continuar con el reseteo de contraseña
+    this.userService.forgotPassword(this.email(), this.customerKey()).subscribe({
+      next: (response) => {
+        // Se limpian los campos y se muestra el mensaje desde el servidor
+        this.email.set("");
+        this.customerKey.set("");
+        this.descriptionSuccess.set(response.message);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.descriptionErrors.set([error.error.error.message]);
+      }
+    });
   }
 }

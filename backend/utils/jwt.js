@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const JWT_ALGORITHM = "HS256";
 const ACCESS_TOKEN_TYPE = "access";
 const EMAIL_VERIFICATION_TOKEN_TYPE = "email_verification";
+const RESET_PASSWORD_TOKEN_TYPE = "reset_password";
 
 const readJwtConfig = () => {
   const requiredVars = [
@@ -70,6 +71,23 @@ const signEmailVerificationToken = ({ id }) => {
   );
 };
 
+const signResetPasswordToken = ({ id }) => {
+  const config = readJwtConfig();
+  const subject = String(id);
+
+  return jwt.sign(
+    { id: subject, tokenType: RESET_PASSWORD_TOKEN_TYPE },
+    config.secret,
+    {
+      algorithm: JWT_ALGORITHM,
+      issuer: config.issuer,
+      audience: config.audience,
+      subject,
+      expiresIn: config.emailVerifyExpiresIn, // Usar el mismo tiempo de expiración
+    }
+  );
+};
+
 const verifyAccessToken = (token) => {
   const config = readJwtConfig();
   const decoded = jwt.verify(token, config.secret, {
@@ -104,10 +122,29 @@ const verifyEmailVerificationToken = (token) => {
   return decoded;
 };
 
+const verifyResetPasswordToken = (token) => {
+  const config = readJwtConfig();
+  const decoded = jwt.verify(token, config.secret, {
+    algorithms: [JWT_ALGORITHM],
+    issuer: config.issuer,
+    audience: config.audience,
+  });
+
+  if (decoded.tokenType !== RESET_PASSWORD_TOKEN_TYPE) {
+    const error = new Error("Tipo de token inválido para reset de contraseña.");
+    error.code = "JWT_INVALID_TOKEN_TYPE";
+    throw error;
+  }
+
+  return decoded;
+};
+
 module.exports = {
   signAccessToken,
   signEmailVerificationToken,
+  signResetPasswordToken,
   verifyAccessToken,
   verifyEmailVerificationToken,
+  verifyResetPasswordToken,
   validateJwtEnvConfig,
 };

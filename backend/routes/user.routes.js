@@ -19,7 +19,9 @@ const nodemailer = require('nodemailer');
 const {
   signAccessToken,
   signEmailVerificationToken,
+  signResetPasswordToken,
   verifyEmailVerificationToken,
+  verifyResetPasswordToken,
 } = require("../utils/jwt");
 
 const sanitizeUser = (userDoc) => {
@@ -78,7 +80,7 @@ router.post("/register", registerRateLimiter, validateRegisterPayload, async (re
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: user.email,
-      subject: 'Verifica tu cuenta - Duck Hack',
+      subject: `Verifica tu cuenta - ${process.env.COMPANY_NAME}`,
       html: `<p>Hola ${user.name || ''},</p>
              <p>Gracias por registrarte. Para activar tu cuenta, haz clic en el siguiente enlace:</p>
              <p><a href="${verifyUrl}">Verificar mi correo</a></p>
@@ -135,6 +137,95 @@ router.get('/verify', async (req, res) => {
   } catch (err) {
     console.error('Error verificando token:', err);
     return sendError(res, 400, "VERIFICATION_TOKEN_INVALID_OR_EXPIRED", "Token inválido o expirado");
+  }
+});
+
+// Ruta para solicitar reset de contraseña
+router.post('/forgot-password', async (req, res) => {
+  const { email, customerKey } = req.body;
+
+  if (!email || !customerKey) {
+    return sendError(res, 400, "MISSING_FIELDS", "Email y clave de cliente son requeridos");
+  }
+
+  try {
+    // Validar customerKey global
+    if (customerKey !== process.env.CUSTOMER_KEY) {
+      return sendError(res, 403, "INVALID_CUSTOMER_KEY", "Clave de cliente inválida.");
+    }
+
+    // Buscar usuario por email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return sendError(res, 404, "USER_NOT_FOUND", "Usuario no encontrado");
+    }
+
+    // Generar token de reset
+    const token = signResetPasswordToken({ id: user._id });
+
+    // URL para reset
+    const frontendBase = process.env.FRONTEND_URL;
+    const resetUrl = `${frontendBase}/reset-password?token=${token}`;
+
+    // Configurar transporter
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: parseInt(process.env.EMAIL_PORT || '587', 10),
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: `Recupera tu contraseña - ${process.env.COMPANY_NAME}`,
+      html: `<p>Hola ${user.name || ''},</p>
+             <p>Para cambiar tu contraseña, haz clic en el siguiente enlace:</p>
+             <p><a href="${resetUrl}">Cambiar mi contraseña</a></p>
+             <p>Si no solicitaste este correo, ignóralo.</p>`
+    };
+
+    // Enviar correo
+    transporter.sendMail(mailOptions).catch(err => {
+      console.error('Error enviando correo de reset:', err);
+    });
+
+    res.status(200).json({
+      message: "Se ha enviado un enlace para cambiar la contraseña al correo que se encuentra registrado."
+    });
+  } catch (error) {
+    console.error('Error en forgot-password:', error);
+    return sendError(res, 500, "INTERNAL_SERVER_ERROR", "Error al procesar la solicitud");
+  }
+});
+
+// Ruta para resetear la contraseña con token
+router.post('/reset-password', async (req, res) => {
+  const { newPassword, token } = req.body;
+
+  if (!token) {
+    return sendError(res, 400, "RESET_TOKEN_REQUIRED", "Token de reset requerido");
+  }
+
+  if (!newPassword || newPassword.length < 6) {
+    return sendError(res, 400, "INVALID_PASSWORD", "La contraseña debe tener al menos 6 caracteres");
+  }
+
+  try {
+    const decoded = verifyResetPasswordToken(token);
+    const user = await User.findById(decoded.id);
+    if (!user) return sendError(res, 404, "USER_NOT_FOUND", "Usuario no encontrado");
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Contraseña cambiada correctamente' });
+  } catch (err) {
+    console.error('Error reseteando contraseña:', err);
+    return sendError(res, 400, "RESET_TOKEN_INVALID_OR_EXPIRED", "Token inválido o expirado");
   }
 });
 

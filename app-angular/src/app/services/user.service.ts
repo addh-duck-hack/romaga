@@ -76,4 +76,12 @@ export class UserService {
       }
     });
   }
+
+  forgotPassword(email:String, key:string): Observable<UserResponse>{
+    const bodyRequest = {
+      email: email,
+      customerKey: key
+    };
+    return this.http.post<UserResponse>(`${ this.env.urlbackend }/api/ds/users/forgot-password`,bodyRequest);
+  }
 }
