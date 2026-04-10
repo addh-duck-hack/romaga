@@ -18,29 +18,51 @@ const mongoGlobalUrl = (process.env.MONGO_URL_GLOBAL || "").trim();
 if (!mongoGlobalUrl) {
   throw new Error("MONGO_URL_GLOBAL es obligatorio y no puede estar vacío.");
 }
-// Validaciones de CORS
-// const configuredCorsOrigins = (process.env.CORS_ALLOWED_ORIGINS || "")
-//   .split(",")
-//   .map((origin) => origin.trim())
-//   .filter(Boolean);
 
-// if (configuredCorsOrigins.length === 0) {
-//   throw new Error("CORS_ALLOWED_ORIGINS es obligatorio y no puede estar vacío.");
-// }
+const configuredCorsOrigins = (process.env.CORS_ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-// const allowedCorsOrigins = new Set(configuredCorsOrigins);
+if (configuredCorsOrigins.length === 0) {
+  throw new Error("CORS_ALLOWED_ORIGINS es obligatorio y no puede estar vacío.");
+}
 
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     // Permite herramientas sin origen (curl/postman/server-to-server)
-//     if (!origin) return callback(null, true);
-//     if (allowedCorsOrigins.has(origin)) return callback(null, true);
-//     return callback(new Error("CORS_ORIGIN_NOT_ALLOWED"));
-//   },
-//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-//   allowedHeaders: ["Content-Type", "Authorization"],
-//   optionsSuccessStatus: 204,
-// };
+const allowedCorsOrigins = new Set(configuredCorsOrigins);
+
+// Orígenes permitidos para desarrollo local
+const localDevOrigins = new Set([
+  'http://localhost:4200',
+  'http://localhost:4201',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:5173',
+  'http://127.0.0.1:4200',
+  'http://127.0.0.1:4201',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
+  'http://127.0.0.1:5173',
+]);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Permite herramientas sin origen (curl/postman/server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Si está habilitado el modo desarrollo local
+    if (process.env.CORS_ALLOW_LOCAL_DEV === 'true' && localDevOrigins.has(origin)) {
+      return callback(null, true);
+    }
+    
+    // Verificar orígenes configurados en producción
+    if (allowedCorsOrigins.has(origin)) return callback(null, true);
+    
+    return callback(new Error("CORS_ORIGIN_NOT_ALLOWED"));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204,
+};
 
 // Conectar a MongoDB global (Modelo B)
 mongoose.connect(mongoGlobalUrl)
@@ -52,12 +74,12 @@ const userRoutes = require("./routes/user.routes");
 const mailRoutes = require("./routes/mail.routes");
 const uploadRoutes = require("./routes/upload.routes");
 
-//app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(
   helmet({
     // API-only backend: CSP se gestiona en frontends.
     contentSecurityPolicy: false,
-    //crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
     hsts: process.env.NODE_ENV === "production",
   })
 );
@@ -72,12 +94,12 @@ if (!uploadsDir) {
 }
 app.use('/api/ds/uploads', express.static(uploadsDir));
 
-// app.use((err, req, res, next) => {
-//   if (err?.message === "CORS_ORIGIN_NOT_ALLOWED") {
-//     return sendError(res, 403, "CORS_ORIGIN_NOT_ALLOWED", "Origen no permitido por la política CORS.");
-//   }
-//   return next(err);
-// });
+app.use((err, req, res, next) => {
+  if (err?.message === "CORS_ORIGIN_NOT_ALLOWED") {
+    return sendError(res, 403, "CORS_ORIGIN_NOT_ALLOWED", "Origen no permitido por la política CORS.");
+  }
+  return next(err);
+});
 
 app.use((err, req, res, next) => {
   console.error("Unhandled server error:", err);
