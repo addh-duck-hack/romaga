@@ -84,4 +84,12 @@ export class UserService {
     };
     return this.http.post<UserResponse>(`${ this.env.urlbackend }/api/ds/users/forgot-password`,bodyRequest);
   }
+
+  resetPassword(token:string, pass:string): Observable<UserResponse>{
+    const bodyRequest = {
+      newPassword: pass,
+      token: token
+    };
+    return this.http.post<UserResponse>(`${ this.env.urlbackend }/api/ds/users/reset-password`,bodyRequest);
+  }
 }

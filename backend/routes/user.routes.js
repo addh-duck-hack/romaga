@@ -222,7 +222,7 @@ router.post('/reset-password', async (req, res) => {
     user.password = newPassword;
     await user.save();
 
-    res.status(200).json({ message: 'Contraseña cambiada correctamente' });
+    res.status(200).json({ message: 'Contraseña cambiada correctamente, ya puede iniciar sesión.' });
   } catch (err) {
     console.error('Error reseteando contraseña:', err);
     return sendError(res, 400, "RESET_TOKEN_INVALID_OR_EXPIRED", "Token inválido o expirado");

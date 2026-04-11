@@ -148,6 +148,7 @@ export default class Login {
         this.name.set("");
         this.email.set("");
         this.password.set("");
+        this.password2.set("");
         this.customerKey.set("");
       },
       error: (error: HttpErrorResponse) => {
