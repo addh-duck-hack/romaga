@@ -4,8 +4,8 @@ const { verifyToken } = require('../middleware/authMiddleware');
 const { sendError } = require("../utils/httpResponses");
 
 // Endpoint para buscar destinos
-router.get('/search', verifyToken, (req, res) => {
-  const { search } = req.query;
+router.get('/:search', verifyToken, (req, res) => {
+  const { search } = req.params;
 
   // Validar que el texto de búsqueda se reciba
   if (!search || search.trim() === '') {
