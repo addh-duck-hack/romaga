@@ -13,61 +13,67 @@
           <!-- div contenedor del formulario -->
           <div class="flex mt-8 w-full">
             <form class="bg-white w-full price-form">
-              <div class="flex items-center price-content-input py-2 px-3 price-rounded mb-4">
+              <div class="flex items-center price-content-input py-2 px-3 price-rounded">
                 <i class="fa-solid fa-map-pin price-form-icon"></i>
                 <input
-                  class="pl-2 outline-none border-none w-full"
+                  class="pl-2 mr-3 outline-none border-none w-full"
                   type="text"
-                  name="campo1"
-                  [value]=""
-                  (input)="campo1.set(campo1txt.value)"
+                  name="origen"
+                  [value]="origen()"
+                  (input)="origen.set(origentxt.value)"
+                  (keyup.enter)="validateOrigen()"
                   placeholder="Origen"
-                  #campo1txt
+                  #origentxt
                 />
                 <button
+                  (click)="validateOrigen()"
                   type="button"
                   class="px-4 py-1 price-no-margin hover:bg-[#C93636] bg-[#8C2626] cursor-pointer price-rounded text-white">
-                  Buscar
+                  {{botonOrigenTitulo()}}
                 </button>
               </div>
-              <!-- <div class="max-w-lg mx-auto">
-                <div class="bg-white rounded-lg border border-gray-200 w-48 text-gray-900 text-sm font-medium">
-                    <a href="#" aria-current="true" class="block px-4 py-2 border-b border-gray-200 w-full rounded-t-lg bg-blue-700 text-white cursor-pointer">
-                        Profile
-                    </a>
-                    <a href="#" class="block px-4 py-2 border-b border-gray-200 w-full hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 cursor-pointer">
-                        Settings
-                    </a>
-                    <a href="#" class="block px-4 py-2 border-b border-gray-200 w-full hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 cursor-pointer">
-                        Messages
-                    </a>
-                    <a href="#" class="block px-4 py-2 border-b border-gray-200 w-full rounded-b-lg hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 cursor-pointer">
-                        Download
-                    </a>
+              @if (errorOrigen() !== "") {
+                <span class="flex items-center font-medium tracking-wide text-red-500 text-xs ml-1">
+                  {{errorOrigen()}}
+                </span>
+              }
+              @if (origenResponse().length > 0) {
+                <div class="max-w-lg mx-auto mt-2">
+                  <div class="content-destines bg-white rounded-lg border border-gray-200 w-full text-gray-900 text-sm font-medium">
+                    @for (origen of origenResponse(); track origen.id_dest; let i = $index) {
+                      <a
+                        (click)="selectOrigen(origen)"
+                        [class]="'block px-4 py-2 w-full hover:bg-gray-100 hover:text-[#8C2626] cursor-pointer' + (i !== origenResponse().length - 1 ? ' border-b border-gray-200' : '')">
+                          <h3 class="">{{origen.nombre}}</h3>
+                          <p class="text-xs text-[#575757]">{{origen.ent_abr}}</p>
+                      </a>
+                    }
+                  </div>
                 </div>
-              </div> -->
-              <div class="flex items-center price-content-input py-2 px-3 price-rounded mb-4">
+              }
+              <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
                 <i class="fa-solid fa-map-pin price-form-icon"></i>
                 <input
                   class="pl-2 outline-none border-none w-full"
                   type="text"
-                  name="campo1"
-                  [value]=""
-                  (input)="campo1.set(campo1txt.value)"
+                  name="destino"
+                  [value]="destino()"
+                  (input)="destino.set(destinotxt.value)"
                   placeholder="Destino"
-                  #campo1txt
+                  #destinotxt
                 />
                 <button
+                  (click)="searchDestino()"
                   type="button"
                   class="px-4 py-1 price-no-margin hover:bg-[#C93636] bg-[#8C2626] cursor-pointer price-rounded text-white">
                   Buscar
                 </button>
               </div>
-              <button
+              <!-- <button
                 type="button"
                 class="block w-3/5 hover:bg-[#C93636] bg-[#8C2626] cursor-pointer mt-4 py-2 price-rounded text-white font-semibold mb-2">
                 Cotizar
-              </button>
+              </button> -->
             </form>
           </div>
         </div>
