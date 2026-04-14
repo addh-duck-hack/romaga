@@ -1,9 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { InegiService } from 'src/app/services/inegi.service';
 import { UserService } from 'src/app/services/user.service';
 import { DestinationInegi } from 'src/app/shared/interfaces/destination.interface';
+import * as L from 'leaflet';
+import { GeoJsonObject } from 'geojson';
 
 @Component({
   selector: 'price-dashboard',
@@ -12,7 +14,7 @@ import { DestinationInegi } from 'src/app/shared/interfaces/destination.interfac
   styleUrl: './price-dashboard.css'
 })
 
-export default class PriceDashboard {
+export default class PriceDashboard implements AfterViewInit{
   // Variables para el origen
   origen = signal('');
   errorOrigen = signal('');
@@ -26,6 +28,18 @@ export default class PriceDashboard {
   inegiService = inject(InegiService);
   userService = inject(UserService);
   router = inject(Router)
+
+  // Variables para Leaflet para los mapas
+  private map!: L.Map;
+  ngAfterViewInit(): void {
+    this.initMap();
+  }
+  private initMap(): void{
+    this.map = L.map('main-chart').setView([19.432629, -99.133203], 7);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(this.map);
+  }
 
   validateOrigen(){
     // Primero validamos el tipo de boton Buscar/Cambiar
@@ -51,7 +65,8 @@ export default class PriceDashboard {
     }else{
       this.origen.set('');
       this.origenSeleccionado.set(null);
-      this.botonOrigenTitulo.set('Buscar')
+      this.botonOrigenTitulo.set('Buscar');
+      this.cleanMap();
     }
   }
 
@@ -61,6 +76,13 @@ export default class PriceDashboard {
       next: (response) => {
         if(response.length > 0){
           this.origenResponse.set(response)
+          // Limpiamos el mapa antes de agregar nuevos puntos
+          this.cleanMap();
+          // Mostramos los puntos en el mapa
+          for (let index = 0; index < response.length; index++) {
+            const destination = response[index];
+            this.setPointInMap(destination.geojson, false, (index + 1).toString())
+          }
         }else{
           this.errorOrigen.set('No se encontraron lugares para esta busqueda')
         }
@@ -72,14 +94,68 @@ export default class PriceDashboard {
     })
   }
 
-  selectOrigen(origen: DestinationInegi){
-    this.origenSeleccionado.set(origen)
-    this.origen.set(origen.nombre)
-    this.botonOrigenTitulo.set('Cambiar')
-    this.origenResponse.set([])
+  selectOrigen(origen: DestinationInegi) {
+    this.origenSeleccionado.set(origen);
+    this.origen.set(origen.nombre);
+    this.botonOrigenTitulo.set('Cambiar');
+    this.origenResponse.set([]);
+
+    // Limpiamos el mapa y agregamos solo el punto seleccionado
+    this.cleanMap();
+    this.setPointInMap(origen.geojson, true, origen.nombre + ' / ' + origen.ent_abr);
   }
 
-  searchDestino(){
+  private cleanMap(){
+    this.map.eachLayer((layer) => {
+      if (!(layer instanceof L.TileLayer)) {
+        this.map.removeLayer(layer);
+      }
+    });
+    this.map.setView([19.432629, -99.133203], 7);
+  }
+
+  private setPointInMap(geojsonData: string | GeoJsonObject, setView: boolean, label?: string) {
+    let parsedGeojson: GeoJsonObject;
+
+    try {
+      parsedGeojson = typeof geojsonData === 'string' ? JSON.parse(geojsonData) : geojsonData;
+    } catch (error) {
+      console.error('GeoJSON inválido:', error, geojsonData);
+      return;
+    }
+
+    if ('crs' in parsedGeojson) {
+      const geojsonWithoutCrs = { ...parsedGeojson } as any;
+      delete geojsonWithoutCrs.crs;
+      parsedGeojson = geojsonWithoutCrs;
+    }
+
+    const layer = L.geoJSON(parsedGeojson as any, {
+      onEachFeature: (feature, layer) => {
+        if (label) {
+          layer.bindTooltip(label, { permanent: true, direction: 'top' });
+        }
+      }
+    }).addTo(this.map);
+
+    if (setView){
+      const point = (parsedGeojson as any).type === 'Point'
+        ? (parsedGeojson as any).coordinates
+        : (parsedGeojson as any).geometry?.type === 'Point'
+          ? (parsedGeojson as any).geometry.coordinates
+          : null;
+
+      if (point && Array.isArray(point) && point.length >= 2) {
+        this.map.setView([point[1], point[0]], 12);
+      }
+
+      if (layer.getBounds) {
+        this.map.fitBounds(layer.getBounds(), { maxZoom: 16 });
+      }
+    }
+  }
+
+  searchDestino() {
     console.log("Se va a buscar origen: " + this.destino());
   }
 

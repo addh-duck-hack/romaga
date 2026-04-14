@@ -44,7 +44,7 @@
                       <a
                         (click)="selectOrigen(origen)"
                         [class]="'block px-4 py-2 w-full hover:bg-gray-100 hover:text-[#8C2626] cursor-pointer' + (i !== origenResponse().length - 1 ? ' border-b border-gray-200' : '')">
-                          <h3 class="">{{origen.nombre}}</h3>
+                          <h3 class="">{{i + 1}} - {{origen.nombre}}</h3>
                           <p class="text-xs text-[#575757]">{{origen.ent_abr}}</p>
                       </a>
                     }
@@ -91,9 +91,8 @@
         </div>
         <!-- Div contenedor del mapa -->
         <div id="main-chart">
-          Aqui va a ir el mapa
+          <div id="map"></div>
         </div>
-        <h1>Otro texto</h1>
       </div>
     </div>
   </div>
