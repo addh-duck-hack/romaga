@@ -36,8 +36,8 @@ router.get('/:search', verifyToken, async (req, res) => {
 
     res.json({
       ok: true,
-      message: 'Búsqueda realizada exitosamente',
-      data,
+      message: 'Se realizo con exito la consulta al servicio del INEGI',
+      inegi: data
     });
   } catch (error) {
     console.error('Error en la petición a INEGI:', error);
