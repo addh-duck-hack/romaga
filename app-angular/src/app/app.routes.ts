@@ -34,6 +34,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/price-dashboard/price-dashboard'),
       },
       {
+        path: 'history',
+        loadComponent: () => import('./pages/dashboard/history-dashboard/history-dashboard'),
+      },
+      {
         path: '**',
         redirectTo: 'home'
       }

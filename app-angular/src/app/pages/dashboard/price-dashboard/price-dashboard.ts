@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 @Component({
   selector: 'price-dashboard',
@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   templateUrl: './price-dashboard.html',
   styleUrl: './price-dashboard.css'
 })
-export default class PriceDashboard { }
+export default class PriceDashboard {
+  campo1 = signal("")
+
+}

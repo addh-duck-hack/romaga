@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { UserService } from 'src/app/services/user.service';
 import { DashboardMenuItem } from 'src/app/shared/interfaces/dashboard-menu-item.interface';
 
 @Component({
@@ -33,6 +34,22 @@ export class SideMenuDashboard {
       description: "Aqui se realizaran las cotizaciones de servicios",
       route: "history",
       versionPro: false
+    },
+    {
+      id: 4,
+      icon: "fa-solid fa-user",
+      name: "Perfil usuario",
+      description: "Aqui se realizaran las cotizaciones de servicios",
+      route: "profile",
+      versionPro: false
     }
   ]);
+
+  userService = inject(UserService);
+  router = inject(Router)
+
+  closeSesion(){
+    this.userService.clearSession();
+    this.router.navigate(['/']);
+  }
 }

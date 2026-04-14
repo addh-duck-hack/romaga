@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { NavbarDashboard } from 'src/app/shared/components/dashboard/navbar-dashboard/navbar-dashboard';
-import { SideMenuDashboard } from 'src/app/shared/components/dashboard/side-menu/side-menu-dashboard/side-menu-dashboard';
-import { FooterDashboard } from './footer-dashboard/footer-dashboard';
+import { SideMenuDashboard } from 'src/app/shared/components/dashboard/side-menu-dashboard/side-menu-dashboard';
+import { FooterDashboard } from '../../shared/components/dashboard/footer-dashboard/footer-dashboard';
 
 @Component({
   selector: 'dashboard',
