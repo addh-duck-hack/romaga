@@ -46,8 +46,10 @@ const localDevOrigins = new Set([
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Permite herramientas sin origen (curl/postman/server-to-server)
-    if (!origin) return callback(null, true);
+    // Permite herramientas sin origen (curl/postman/server-to-server) solo si CORS_ALLOW_LOCAL_DEV está en true
+    if (!origin) {
+      return process.env.CORS_ALLOW_LOCAL_DEV === 'true' ? callback(null, true) : callback(new Error("CORS_ORIGIN_NOT_ALLOWED"));
+    }
     
     // Si está habilitado el modo desarrollo local
     if (process.env.CORS_ALLOW_LOCAL_DEV === 'true' && localDevOrigins.has(origin)) {
