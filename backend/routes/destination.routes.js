@@ -4,7 +4,7 @@ const { verifyToken } = require('../middleware/authMiddleware');
 const { sendError } = require("../utils/httpResponses");
 
 // Endpoint para buscar destinos
-router.get('/:search', verifyToken, (req, res) => {
+router.get('/:search', verifyToken, async (req, res) => {
   const { search } = req.params;
 
   // Validar que el texto de búsqueda se reciba
@@ -12,17 +12,37 @@ router.get('/:search', verifyToken, (req, res) => {
     return sendError(res, 400, 'MISSING_SEARCH_TEXT', 'El texto de búsqueda es requerido');
   }
 
-  // Aquí iría la lógica de búsqueda en la base de datos
-  // Por ejemplo, buscar en un modelo de Destination
-  // const results = await Destination.find({ name: { $regex: search, $options: 'i' } });
+  // Consumo al api del INEGI
+  const urlFinal = process.env.INEGI_URL_API + "/buscadestino";
+  try {
+    const response = await fetch(urlFinal, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        key: process.env.INEGI_APIKEY,
+        buscar: search.trim(),
+        type: process.env.INEGI_TYPE_RESPONSE,
+        num: process.env.INEGI_NUM_RESULTS
+      }),
+    });
 
-  // Placeholder: devolver el texto de búsqueda
-  res.json({
-    ok: true,
-    message: 'Búsqueda realizada exitosamente',
-    search: search.trim(),
-    // results: results // cuando se implemente
-  });
+    if (!response.ok) {
+      return sendError(res, response.status, 'INEGI_API_ERROR', 'Error al consultar la API del INEGI');
+    }
+
+    const data = await response.json();
+
+    res.json({
+      ok: true,
+      message: 'Búsqueda realizada exitosamente',
+      data,
+    });
+  } catch (error) {
+    console.error('Error en la petición a INEGI:', error);
+    return sendError(res, 500, 'INTERNAL_ERROR', 'Error interno al procesar la búsqueda');
+  }
 });
 
 module.exports = router;
