@@ -73,6 +73,7 @@ mongoose.connect(mongoGlobalUrl)
 const userRoutes = require("./routes/user.routes");
 const mailRoutes = require("./routes/mail.routes");
 const uploadRoutes = require("./routes/upload.routes");
+const destinationRoutes = require("./routes/destination.routes")
 
 app.use(cors(corsOptions));
 app.use(
@@ -86,6 +87,7 @@ app.use(
 app.use("/api/ds/users", userRoutes);
 app.use("/api/ds/mail", mailRoutes);
 app.use("/api/ds/uploads", uploadRoutes);
+app.use("/api/ds/destination",destinationRoutes)
 
 // Servir la carpeta uploads como estática
 const uploadsDir = resolveUploadsDir();
