@@ -50,15 +50,15 @@ const corsOptions = {
     if (!origin) {
       return process.env.CORS_ALLOW_LOCAL_DEV === 'true' ? callback(null, true) : callback(new Error("CORS_ORIGIN_NOT_ALLOWED"));
     }
-    
+
     // Si está habilitado el modo desarrollo local
     if (process.env.CORS_ALLOW_LOCAL_DEV === 'true' && localDevOrigins.has(origin)) {
       return callback(null, true);
     }
-    
+
     // Verificar orígenes configurados en producción
     if (allowedCorsOrigins.has(origin)) return callback(null, true);
-    
+
     return callback(new Error("CORS_ORIGIN_NOT_ALLOWED"));
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -76,6 +76,7 @@ const userRoutes = require("./routes/user.routes");
 const mailRoutes = require("./routes/mail.routes");
 const uploadRoutes = require("./routes/upload.routes");
 const destinationRoutes = require("./routes/destination.routes")
+const routeCostRoutes = require("./routes/route.cost.routes")
 
 app.use(cors(corsOptions));
 app.use(
@@ -90,6 +91,7 @@ app.use("/api/ds/users", userRoutes);
 app.use("/api/ds/mail", mailRoutes);
 app.use("/api/ds/uploads", uploadRoutes);
 app.use("/api/ds/destination",destinationRoutes)
+app.use("/api/ds/route/cost", routeCostRoutes)
 
 // Servir la carpeta uploads como estática
 const uploadsDir = resolveUploadsDir();
