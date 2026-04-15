@@ -61,7 +61,7 @@
               <!-- ------------------------------------------------------------------------------- -->
               <!-- Selector del destino con vistas adicionales y listado de destinos  -->
               <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
-                <i class="fa-solid fa-map-pin price-form-icon"></i>
+                <i class="fa-solid fa-location-crosshairs price-form-icon"></i>
                 <input
                   class="pl-2 outline-none border-none w-full"
                   type="text"
@@ -151,13 +151,140 @@
               }
               <!-- Termina selector del destino con vistas adicionales y listado de destinos  -->
               <!-- ------------------------------------------------------------------------------- -->
-              <!-- <button
+              <!-- OptionInput para seleccionar el tipo de vehiculo del cual se requiere la consulta  -->
+              <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
+                <i class="fa-solid fa-car-side price-form-icon"></i>
+                <select
+                  #selectOptionVehicle
+                  id="vehicle"
+                  class="w-full"
+                  (change)="selectVehicle(selectOptionVehicle.value)"
+                >
+                  <option selected>Selecciona un tipo de vehículo</option>
+                  @for (vehicleValue of valuesOfVehicle; track vehicleValue) {
+                    <option value="{{vehicleValue}}">
+                      {{namesOfVehicle[vehicleValue]}}
+                    </option>
+                  }
+                </select>
+              </div>
+              <!-- Termina optionInput para seleccionar el tipo de vehiculo del cual se requiere la consulta  -->
+              <!-- ------------------------------------------------------------------------------- -->
+              @if (selectedVehicle() > 4) {
+                <!-- optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
+                <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
+                  <i class="fa-solid fa-truck-moving price-form-icon"></i>
+                  <select
+                    #selectOptionOver
+                    id="over"
+                    class="w-full"
+                    (change)="selectOver(selectOptionOver.value)"
+                  >
+                    <option selected>Selecciona el numero de ejes excedentes</option>
+                    @for (overValue of valuesOfOver; track overValue) {
+                      <option value="{{overValue}}">
+                        {{namesOfOver[overValue]}}
+                      </option>
+                    }
+                  </select>
+                </div>
+                <!-- Termina optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
+              }
+              <!-- ------------------------------------------------------------------------------- -->
+              <!-- Boton para obtener costos de casetas -->
+              <button
+                (click)="validateFormToCalculation()"
                 type="button"
                 class="block w-3/5 hover:bg-[#C93636] bg-[#8C2626] cursor-pointer mt-4 py-2 price-rounded text-white font-semibold mb-2">
-                Cotizar
-              </button> -->
+                Obtener costos de casetas
+              </button>
+              @if (errorsFormCost().length > 0) {
+                @for (errorForm of errorsFormCost(); track $index) {
+                  <span class="flex items-center font-medium tracking-wide text-red-500 text-xs ml-1">
+                    {{errorForm}}
+                  </span>
+                }
+              }
+              @if (calculationLogin()) {
+                <div class="mt-4">
+                  <skeleton-content-loader />
+                </div>
+              }
+              <!-- Finaliza boton para obtener costos de casetas -->
+              <!-- ------------------------------------------------------------------------------- -->
             </form>
           </div>
+          <!-- ------------------------------------------------------------------------------- -->
+          <!-- Contenedor para el resultado de la cotizacion -->
+          @if (costServiceResponde().length > 0) {
+            <div class="p-4 w-full">
+              <div class="grid grid-cols-12 gap-4">
+                @if (costServiceResponde()[0].costo_caseta > 0) {
+                  <div class="col-span-12">
+                    <div class="flex flex-row bg-white shadow-sm rounded p-4">
+                      <div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-orange-500">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                      </div>
+                      <div class="flex flex-col flex-grow ml-4">
+                        <div class="text-sm text-gray-500">Costo de caseta</div>
+                        <div class="font-bold text-lg">$ {{costServiceResponde()[0].costo_caseta}}.00</div>
+                      </div>
+                    </div>
+                  </div>
+                }
+                @if (costServiceResponde()[0].eje_excedente > 0) {
+                  <div class="col-span-12">
+                    <div class="flex flex-row bg-white shadow-sm rounded p-4">
+                      <div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-orange-500">
+                        <i class="fa-solid fa-truck-moving"></i>
+                      </div>
+                      <div class="flex flex-col flex-grow ml-4">
+                        <div class="text-sm text-gray-500">Costo por los ejes exedentes</div>
+                        <div class="font-bold text-lg">$ {{costServiceResponde()[0].eje_excedente}}.00</div>
+                      </div>
+                    </div>
+                  </div>
+                }
+                <div class="col-span-12">
+                  <div class="flex flex-row bg-white shadow-sm rounded p-4">
+                    <div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-blue-100 text-blue-500">
+                      <i class="fa-solid fa-route"></i>
+                    </div>
+                    <div class="flex flex-col flex-grow ml-4">
+                      <div class="text-sm text-gray-500">Distancia</div>
+                      <div class="font-bold text-lg">{{costServiceResponde()[0].long_km}} Kms</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-span-12">
+                  <div class="flex flex-row bg-white shadow-sm rounded p-4">
+                    <div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-green-100 text-green-500">
+                      <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                    <div class="flex flex-col flex-grow ml-4">
+                      <div class="text-sm text-gray-500">Tiempo estimado</div>
+                      <div class="font-bold text-lg">{{costServiceResponde()[0].tiempo_min}} min</div>
+                    </div>
+                  </div>
+                </div>
+                @if (costServiceResponde()[0].advertencia != '') {
+                  <div class="col-span-12">
+                    <div class="flex flex-row bg-white shadow-sm rounded p-4">
+                      <div class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 text-red-500">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                      </div>
+                      <div class="flex flex-col flex-grow ml-4">
+                        <div class="text-sm text-gray-500">Advertencias</div>
+                        <div class="font-bold text-lg">{{costServiceResponde()[0].advertencia}}</div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          <!-- Finaliza contenedor para el resultado de la cotizacion -->
+          <!-- ------------------------------------------------------------------------------- -->
         </div>
       </div>
       <!-- ------------------------------------------------------------------------------- -->

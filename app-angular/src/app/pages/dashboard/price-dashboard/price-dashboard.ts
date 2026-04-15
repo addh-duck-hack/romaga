@@ -7,6 +7,7 @@ import { DestinationInegi } from 'src/app/shared/interfaces/destination.interfac
 import * as L from 'leaflet';
 import { GeoJsonObject } from 'geojson';
 import { SkeletonContentLoader } from 'src/app/shared/components/skeleton/skeleton-content-loader/skeleton-content-loader';
+import { CostInegi } from 'src/app/shared/interfaces/route.cost.interface';
 
 @Component({
   selector: 'price-dashboard',
@@ -31,10 +32,23 @@ export default class PriceDashboard implements AfterViewInit{
   destinosSeleccionados = signal<DestinationInegi[]>([]);
   destinoLoading = signal(false);
 
-  //Variables para consmo de servicios
+  // Variables para options de vehiculos y ejes exedentes
+  valuesOfVehicle = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  namesOfVehicle = ["Motocicleta" , "Automóvil", "Autobús dos ejes", "Autobús tres ejes", "Autobús cuatro ejes", "Camión dos ejes", "Camión tres ejes", "Camión cuatro ejes", "Camión cinco ejes", "Camión seis ejes", "Camión siete ejes", "Camión ocho ejes", "Camión nueve ejes"];
+  selectedVehicle = signal<number>(-1);
+  valuesOfOver = [0, 1, 2, 3, 4, 5];
+  namesOfOver = ["Sin ejes excedentes", "Un eje excedente", "Dos ejes excedentes", "Tres ejes excedentes", "Cuatro ejes excedentes", "Cinco ejes excedentes"];
+  selectedOver = signal<number>(0);
+
+  // Variables para obtencion de costos
+  errorsFormCost = signal<string[]>([]);
+  calculationLogin = signal(false);
+
+  //Variables para consumo de servicios
   inegiService = inject(InegiService);
   userService = inject(UserService);
-  router = inject(Router)
+  router = inject(Router);
+  costServiceResponde = signal<CostInegi[]>([])
 
   // Variables para Leaflet para los mapas
   private map!: L.Map;
@@ -188,6 +202,8 @@ export default class PriceDashboard implements AfterViewInit{
       }
     }
     this.destinosSeleccionados.set(newArray);
+    // Cuando se elimina un destino vamos a limpiar los resultados
+    this.costServiceResponde.set([]);
   }
 
   // Funciones para el manejo de los mapas
@@ -249,6 +265,30 @@ export default class PriceDashboard implements AfterViewInit{
     }
   }
 
+  private setRoutetInMap(dataInegi: CostInegi) {
+    let parsedGeojson: GeoJsonObject;
+    let geojsonData = dataInegi.geojson
+
+    try {
+      parsedGeojson = typeof geojsonData === 'string' ? JSON.parse(geojsonData) : geojsonData;
+    } catch (error) {
+      console.error('GeoJSON inválido:', error, geojsonData);
+      return;
+    }
+
+    if ('crs' in parsedGeojson) {
+      const geojsonWithoutCrs = { ...parsedGeojson } as any;
+      delete geojsonWithoutCrs.crs;
+      parsedGeojson = geojsonWithoutCrs;
+    }
+
+    const layer = L.geoJSON(parsedGeojson as any).addTo(this.map);
+
+    if (layer.getBounds) {
+      this.map.fitBounds(layer.getBounds(), { maxZoom: 16 });
+    }
+  }
+
   // Obeter token de la sesión actual del usuario
   getSessionToken():string {
     // Validamos que el token esta vigente para poder hacer la consulta
@@ -260,5 +300,82 @@ export default class PriceDashboard implements AfterViewInit{
       this.router.navigate(['/']);
       return ""
     }
+  }
+
+  // Funciones para los selects
+  selectVehicle(value: string) {
+    let valueNum = Number(value);
+    if (valueNum > 4){
+      this.selectedOver.set(-1);
+    }else{
+      this.selectedOver.set(0);
+    }
+    this.selectedVehicle.set(valueNum);
+    // Cuando se cambia tipo de vehiculo, tambien limpiamos los resultados
+    this.costServiceResponde.set([]);
+  }
+
+  selectOver(value: string) {
+    let valueNum = Number(value)
+    this.selectedOver.set(valueNum);
+    // Cuando se cambia el numero de ejes exedentes, tambien limpiamos los resultados
+    this.costServiceResponde.set([]);
+  }
+
+  // Funcion para obtener los costos de las casetas
+  validateFormToCalculation() {
+    //Limpiamos los errores del formulario
+    this.errorsFormCost.set([]);
+    const newErrorsForm:string[] = [];
+    // Se valida que se seleccionara origen
+    if (this.origenSeleccionado() == null){
+      newErrorsForm.push("No se selecciono origen");
+    }
+    // Se valida que se seleccionara un destino
+    if (this.destinosSeleccionados().length == 0){
+      newErrorsForm.push("No se selecciono destino");
+    }
+    // Se valida que se seleccionara tipo de vehiculo
+    if (this.selectedVehicle() == -1){
+      newErrorsForm.push("No se selecciono tipo de vehículo");
+    }
+    // Se valida que se seleccionara eje excedente, solo cuando es camion de 2 ejes o mas
+    if (this.selectedOver() == -1){
+      newErrorsForm.push("No se seleccionaron los ejes excedentes");
+    }
+
+    if (newErrorsForm.length > 0){
+      this.errorsFormCost.set(newErrorsForm);
+      return;
+    }
+
+    //Si no existen errores ahora si se va a realizar las peticiones
+    this.calculationLogin.set(true);
+    this.calculateRouteCost();
+  }
+
+  calculateRouteCost(): void{
+    const sessionToken = this.getSessionToken();
+    const originIdDes = this.origenSeleccionado()?.id_dest || '';
+    const destinationIdDes = this.destinosSeleccionados()[0].id_dest;
+    const vehicleStr = this.selectedVehicle().toString();
+    const overStr = this.selectedOver().toString();
+
+    this.inegiService.calculateRoute(originIdDes,destinationIdDes, vehicleStr, overStr, sessionToken).subscribe({
+      next: (response) => {
+        // Se limpia el mapa antes de agregar nuevos puntos
+        this.cleanMap();
+        this.calculationLogin.set(false);
+        //
+        // Mostramos los puntos en el mapa
+        this.costServiceResponde.set([response]);
+        this.setRoutetInMap(response);
+      },
+      error: (error: HttpErrorResponse) => {
+        // Mostrar el mensaje de error del servidor
+        this.errorsFormCost.set([error.error.error.message]);
+        this.calculationLogin.set(false);
+      }
+    })
   }
 }
