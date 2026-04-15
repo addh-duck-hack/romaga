@@ -4,16 +4,22 @@ const { verifyToken } = require('../middleware/authMiddleware');
 const { sendError } = require("../utils/httpResponses");
 
 // Endpoint para buscar destinos
-router.get('/:search', verifyToken, async (req, res) => {
-  const { search } = req.params;
+router.post('/calculate', verifyToken, async (req, res) => {
+  const { origin, destination, vehicleType, over } = req.body;
 
-  // Validar que el texto de búsqueda se reciba
-  if (!search || search.trim() === '') {
-    return sendError(res, 400, 'MISSING_SEARCH_TEXT', 'El texto de búsqueda es requerido');
+  // Validar que todos los datos existan sino se regresa error indicando el error
+  if (!origin || origin.trim() === '') {
+    return sendError(res, 400, 'MISSING_PARAMETER_TEXT', 'No se capturo origen válido');
+  }
+  if (!destination || destination.trim() === '') {
+    return sendError(res, 400, 'MISSING_PARAMETER_TEXT', 'No se capturo destino válido');
+  }
+  if (!vehicleType || vehicleType.trim() === '') {
+    return sendError(res, 400, 'MISSING_PARAMETER_TEXT', 'No se capturo tipo de vehículo válido');
   }
 
   // Consumo al api del INEGI
-  const urlFinal = process.env.INEGI_URL_API + "/buscadestino";
+  const urlFinal = process.env.INEGI_URL_API + "/cuota";
   try {
     const response = await fetch(urlFinal, {
       method: 'POST',
@@ -23,9 +29,11 @@ router.get('/:search', verifyToken, async (req, res) => {
       body: new URLSearchParams({
         key: process.env.INEGI_APIKEY,
         type: process.env.INEGI_TYPE_RESPONSE,
-        num: process.env.INEGI_NUM_RESULTS,
         proj: process.env.INEGI_PROJ_TYPE,
-        buscar: search.trim()
+        dest_i: origin,
+        dest_f: destination,
+        v: vehicleType,
+        e: over
       }),
     });
 
