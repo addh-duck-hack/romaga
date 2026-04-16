@@ -24,6 +24,7 @@ export default class PriceDashboard implements AfterViewInit{
   origenSeleccionado = signal<DestinationInegi | null>(null);
   botonOrigenTitulo = signal('Buscar');
   origenLoading = signal(false);
+  ultimoOrigenBuscado = signal("");
 
   // Variables para el manejo de los destinos
   destino = signal('');
@@ -31,6 +32,7 @@ export default class PriceDashboard implements AfterViewInit{
   destinoResponse = signal<DestinationInegi[]>([]);
   destinosSeleccionados = signal<DestinationInegi[]>([]);
   destinoLoading = signal(false);
+  ultimoDestinoBuscado = signal("");
 
   // Variables para options de vehiculos y ejes exedentes
   valuesOfVehicle = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -67,7 +69,6 @@ export default class PriceDashboard implements AfterViewInit{
   validateOrigen(){
     // Primero validamos el tipo de boton Buscar/Cambiar
     if (this.botonOrigenTitulo() == 'Buscar'){
-      this.origenResponse.set([]);
       // Validamos que se escribio un origen
       if (!this.origen()) {
         this.errorOrigen.set('Ingrese el origen a buscar');
@@ -82,15 +83,20 @@ export default class PriceDashboard implements AfterViewInit{
         }
       }
 
-      // Cuando ya se valido realizamos la busqueda
-      if(!this.errorOrigen()){
+      // Si la ultima busqueda es igual a la busqueda actual, entonces el boton no funcionara
+      if (this.ultimoOrigenBuscado() != this.origen()){
+        // Cuando ya se valido realizamos la busqueda
+        this.costServiceResponde.set([]);
+        this.origenResponse.set([]);
         this.origenLoading.set(true);
         this.searchPoint(true);
+        this.ultimoOrigenBuscado.set(this.origen())
       }
     }else{
       this.origen.set('');
       this.origenSeleccionado.set(null);
       this.botonOrigenTitulo.set('Buscar');
+      this.ultimoOrigenBuscado.set("")
       this.cleanMap();
     }
   }
@@ -166,10 +172,15 @@ export default class PriceDashboard implements AfterViewInit{
       }
     }
 
-    // Cuando ya se valido realizamos la busqueda
-    if(!this.errorDestino()){
-      this.destinoLoading.set(true);
-      this.searchPoint(false);
+    // Si la ultima busqueda es igual a la busqueda actual, entonces el boton no funcionara
+    if (this.ultimoDestinoBuscado() != this.destino()){
+      // Cuando ya se valido realizamos la busqueda
+      if(!this.errorDestino()){
+        this.destinoLoading.set(true);
+        this.searchPoint(false);
+        this.costServiceResponde.set([]);
+        this.ultimoDestinoBuscado.set(this.destino());
+      }
     }
   }
 
@@ -184,6 +195,7 @@ export default class PriceDashboard implements AfterViewInit{
     this.destinosSeleccionados.update(destinos => [...destinos, destino])
     this.destino.set('');
     this.destinoResponse.set([]);
+    this.ultimoDestinoBuscado.set('');
 
     // Limpiamos el mapa y agregamos solo el punto seleccionado
     this.cleanMap();
@@ -350,8 +362,10 @@ export default class PriceDashboard implements AfterViewInit{
     }
 
     //Si no existen errores ahora si se va a realizar las peticiones
-    this.calculationLogin.set(true);
-    this.calculateRouteCost();
+    if (!this.calculationLogin()){
+      this.calculationLogin.set(true);
+      this.calculateRouteCost();
+    }
   }
 
   calculateRouteCost(): void{

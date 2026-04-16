@@ -21,8 +21,8 @@ export class SideMenuDashboard {
     },
     {
       id: 2,
-      icon: "fa-solid fa-satellite",
-      name: "Cotizaciones",
+      icon: "fa-solid fa-hand-holding-dollar",
+      name: "Costos de casetas",
       description: "Aqui se realizaran las cotizaciones de servicios",
       route: "price",
       versionPro: true
