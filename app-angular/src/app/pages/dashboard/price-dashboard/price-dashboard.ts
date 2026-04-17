@@ -7,9 +7,10 @@ import { DestinationInegi } from 'src/app/shared/interfaces/destination.interfac
 import * as L from 'leaflet';
 import { GeoJsonObject } from 'geojson';
 import { SkeletonContentLoader } from 'src/app/shared/components/skeleton/skeleton-content-loader/skeleton-content-loader';
-import { CostInegi } from 'src/app/shared/interfaces/route.cost.interface';
+import { DataCostInegi } from 'src/app/shared/interfaces/route.cost.interface';
 import { DetailCostData } from 'src/app/shared/interfaces/detail-cost-data.interface';
 import { DetailCostItem } from 'src/app/shared/components/dashboard/detail-cost-item/detail-cost-item';
+import { DataDetailCostInegi } from 'src/app/shared/interfaces/detail-route.cost.interface';
 
 @Component({
   selector: 'price-dashboard',
@@ -48,13 +49,16 @@ export default class PriceDashboard implements AfterViewInit{
   errorsFormCost = signal<string[]>([]);
   calculationLoading = signal(false);
   detailLoading = signal(false);
-  costServiceResponde = signal<CostInegi[]>([]);
+  costServiceResponde = signal<DataCostInegi[]>([]);
   totalTollCost = 0;
   totalOverCost = 0;
   totalLongKms = 0.0;
   totalMinTime = 0.0;
   totalWarnings = '';
+  detailsCostRouteResponse = signal<DataDetailCostInegi[]>([]);
+  detailsCostRoute = signal<DetailCostData[]>([]);
   elementsInListOfCost = signal<DetailCostData[]>([]);
+  showDetails = signal(false);
 
   //Variables para consumo de servicios
   inegiService = inject(InegiService);
@@ -286,7 +290,33 @@ export default class PriceDashboard implements AfterViewInit{
     }
   }
 
-  private setRoutetInMap(dataInegi: CostInegi) {
+  private setPointTollInMap(dataInegi: DataDetailCostInegi, label: string){
+    let parsedGeojson: GeoJsonObject;
+    let geojsonData = dataInegi.geojson
+
+    try {
+      parsedGeojson = typeof geojsonData === 'string' ? JSON.parse(geojsonData) : geojsonData;
+    } catch (error) {
+      console.error('GeoJSON inválido:', error, geojsonData);
+      return;
+    }
+
+    if ('crs' in parsedGeojson) {
+      const geojsonWithoutCrs = { ...parsedGeojson } as any;
+      delete geojsonWithoutCrs.crs;
+      parsedGeojson = geojsonWithoutCrs;
+    }
+
+    const layer = L.geoJSON(parsedGeojson as any, {
+      onEachFeature: (feature, layer) => {
+        if (label) {
+          layer.bindTooltip(label, { permanent: true, direction: 'top' });
+        }
+      }
+    }).addTo(this.map);
+  }
+
+  private setRoutetInMap(dataInegi: DataCostInegi) {
     let parsedGeojson: GeoJsonObject;
     let geojsonData = dataInegi.geojson
 
@@ -381,6 +411,9 @@ export default class PriceDashboard implements AfterViewInit{
       this.totalMinTime = 0.0;
       this.totalWarnings = '';
       this.elementsInListOfCost.set([]);
+      this.detailsCostRouteResponse.set([]);
+      this.detailsCostRoute.set([]);
+      this.showDetails.set(false);
       // Se llama el servicio tantos destinos existan
       this.calculateRouteCost(0);
     }
@@ -445,8 +478,10 @@ export default class PriceDashboard implements AfterViewInit{
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-hand-holding-dollar',
+      titleStrong: '',
       title: 'Costo total de las casetas',
       value: this.totalTollCost == 0 ? 'No hay costo de peaje en esta ruta' : '$' + this.totalTollCost +'.00',
+      subValue: '',
       btnDetail: this.totalTollCost == 0 ? false : true
     };
     let overCost: DetailCostData = {
@@ -454,8 +489,10 @@ export default class PriceDashboard implements AfterViewInit{
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-truck-moving',
+      titleStrong: '',
       title: 'Costo total de los ejes excedentes',
       value: '$' + this.totalOverCost +'.00',
+      subValue: '',
       btnDetail: this.totalOverCost == 0 ? false : true
     };
     let longKms: DetailCostData = {
@@ -463,8 +500,10 @@ export default class PriceDashboard implements AfterViewInit{
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-route',
+      titleStrong: '',
       title: 'Total de kilometros',
       value: this.totalLongKms +' Kms',
+      subValue: '',
       btnDetail: false
     };
     let totalTime: DetailCostData = {
@@ -472,8 +511,10 @@ export default class PriceDashboard implements AfterViewInit{
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-hourglass-half',
+      titleStrong: '',
       title: 'Total de tiempo estimado',
       value: this.convertMinutesToDescription(this.totalMinTime),
+      subValue: '',
       btnDetail: false
     };
     let warnings: DetailCostData = {
@@ -481,8 +522,10 @@ export default class PriceDashboard implements AfterViewInit{
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-triangle-exclamation',
+      titleStrong: '',
       title: 'Advertencias en la ruta',
       value: this.totalWarnings,
+      subValue: '',
       btnDetail: false
     };
 
@@ -498,8 +541,87 @@ export default class PriceDashboard implements AfterViewInit{
     this.elementsInListOfCost.set(newElementsOfList);
   }
 
-  openDetailOfRoutes(isOpen: boolean){
-    // Cuando se pulse el boton de opcion, vamos a consumir el
+  newCalculation(){
+    this.elementsInListOfCost.set([])
+    this.showDetails.set(false);
+  }
+
+  showDetailOfRoutes(isOpen: boolean){
+    this.showDetails.set(isOpen);
+    // Cuando se pulse el boton de opcion, vamos a consumir el servicio para obtener los detalles de las casetas
+    if (this.detailsCostRoute().length == 0){
+      // Si no se tienen detalles consumimos el servicio
+      if (!this.calculationLoading()){
+        this.calculationLoading.set(true);
+        this.getDetailsOfRoute(0);
+      }
+    }
+  }
+
+  getDetailsOfRoute(index: number): void{
+    const sessionToken = this.getSessionToken();
+    let originIdDes = '';
+    if (index == 0){
+      originIdDes = this.origenSeleccionado()?.id_dest || '';
+    }else{
+      originIdDes = this.destinosSeleccionados()[index - 1].id_dest;
+    }
+
+    const destinationIdDes = this.destinosSeleccionados()[index].id_dest;
+    const vehicleStr = this.selectedVehicle().toString();
+    const overStr = this.selectedOver().toString();
+
+    this.inegiService.detailRoute(originIdDes,destinationIdDes, vehicleStr, overStr, sessionToken).subscribe({
+      next: (response) => {
+        // LLenamos el arreglo de rutas obtenidas en el servicio
+        if (index == 0){
+          this.detailsCostRouteResponse.set(response);
+        }else{
+          let newDetails = this.detailsCostRouteResponse()
+          for (let index = 0; index < response.length; index++) {
+            const element = response[index];
+            newDetails.push(element);
+          }
+          this.detailsCostRouteResponse.set(newDetails);
+        }
+        if (index == this.destinosSeleccionados().length - 1){
+          this.calculationLoading.set(false);
+          this.setResultDetailsInList();
+        }else{
+          this.getDetailsOfRoute(index + 1);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // Mostrar el mensaje de error del servidor
+        this.errorsFormCost.set([error.error.error.message]);
+        this.calculationLoading.set(false);
+      }
+    })
+  }
+
+  setResultDetailsInList(){
+    //Ya se tienen todas los detalles de las rutas en el arreglo detailsCostRouteResponse, se itera para colocar las casetas en un listado
+    let newListPoints:DetailCostData[] = []
+    for (let index = 0; index < this.detailsCostRouteResponse().length; index++) {
+      const element = this.detailsCostRouteResponse()[index];
+      if (element.costo_caseta > 0){
+        const icon = element.eje_excedente == 0 ? 'fa-solid fa-hand-holding-dollar' : 'fa-solid fa-truck-moving';
+        let tollCost: DetailCostData = {
+          id: newListPoints.length,
+          bgColor: '#f26a525b',
+          iconColor: '#8C2626',
+          icon: icon,
+          titleStrong: (newListPoints.length + 1) + '.-',
+          title: element.direccion,
+          value: '$' + element.costo_caseta + '.00',
+          subValue: element.eje_excedente == 0 ? '' : '+$' + element.eje_excedente + '.00 por ejes exedentes',
+          btnDetail: false
+        };
+        newListPoints.push(tollCost);
+        this.setPointTollInMap(element, (newListPoints.length) + '')
+      }
+    }
+    this.detailsCostRoute.set(newListPoints);
   }
 
   //Utilidades

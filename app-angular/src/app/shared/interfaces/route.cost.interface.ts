@@ -5,12 +5,12 @@ export interface RouteCostResponse {
 }
 
 export interface CostInegi {
-  data:     CostInegi;
+  data:     DataCostInegi;
   meta:     MetaInegi;
   response: ResponseInegi;
 }
 
-export interface CostInegi {
+export interface DataCostInegi {
   geojson:      string;
   costo_caseta: number;
   tiempo_min:   number;

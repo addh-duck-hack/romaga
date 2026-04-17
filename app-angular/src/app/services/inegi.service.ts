@@ -3,7 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { map, Observable } from 'rxjs';
 import { DestinationInegi, DestinationResponse } from '../shared/interfaces/destination.interface';
-import { CostInegi, RouteCostResponse } from '../shared/interfaces/route.cost.interface';
+import { DataCostInegi, RouteCostResponse } from '../shared/interfaces/route.cost.interface';
+import { DataDetailCostInegi, DetailRouteCostResponse } from '../shared/interfaces/detail-route.cost.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class InegiService {
     );
   }
 
-  calculateRoute(origin: string, destination: string, vehicle: string, over: string, token: string): Observable<CostInegi> {
+  calculateRoute(origin: string, destination: string, vehicle: string, over: string, token: string): Observable<DataCostInegi> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -42,6 +43,28 @@ export class InegiService {
 
     return this.http.post<RouteCostResponse>(
       `${ this.env.urlbackend }/api/ds/route/cost/calculate`,
+      bodyRequest,
+      { headers }
+    ).pipe(
+      map(({ inegi }) => inegi),
+      map(({ data }) => data)
+    );
+  }
+
+  detailRoute(origin: string, destination: string, vehicle: string, over: string, token: string): Observable<DataDetailCostInegi[]> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const bodyRequest = {
+      origin: origin,
+      destination: destination,
+      vehicleType: vehicle,
+      over: over
+    };
+
+    return this.http.post<DetailRouteCostResponse>(
+      `${ this.env.urlbackend }/api/ds/route/cost/details`,
       bodyRequest,
       { headers }
     ).pipe(

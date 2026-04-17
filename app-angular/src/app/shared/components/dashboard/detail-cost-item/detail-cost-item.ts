@@ -11,10 +11,4 @@ import { DetailCostData } from 'src/app/shared/interfaces/detail-cost-data.inter
 export class DetailCostItem {
   dataCost = input.required<DetailCostData>();
   openDetail = output<boolean>();
-  isOpen = false;
-
-  changeStatusOfDetails(){
-    this.isOpen = !this.isOpen;
-    this.openDetail.emit(this.isOpen);
-  }
 }
