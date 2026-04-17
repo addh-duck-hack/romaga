@@ -17,7 +17,7 @@ export interface CostInegi {
   advertencia:  string;
   long_km:      number;
   peaje:        string;
-  eje_excedente: number;
+  eje_excedente: number | undefined;
 }
 
 export interface MetaInegi {

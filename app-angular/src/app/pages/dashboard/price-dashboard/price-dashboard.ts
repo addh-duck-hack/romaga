@@ -8,10 +8,12 @@ import * as L from 'leaflet';
 import { GeoJsonObject } from 'geojson';
 import { SkeletonContentLoader } from 'src/app/shared/components/skeleton/skeleton-content-loader/skeleton-content-loader';
 import { CostInegi } from 'src/app/shared/interfaces/route.cost.interface';
+import { DetailCostData } from 'src/app/shared/interfaces/detail-cost-data.interface';
+import { DetailCostItem } from 'src/app/shared/components/dashboard/detail-cost-item/detail-cost-item';
 
 @Component({
   selector: 'price-dashboard',
-  imports: [SkeletonContentLoader],
+  imports: [SkeletonContentLoader, DetailCostItem],
   templateUrl: './price-dashboard.html',
   styleUrl: './price-dashboard.css'
 })
@@ -45,12 +47,18 @@ export default class PriceDashboard implements AfterViewInit{
   // Variables para obtencion de costos
   errorsFormCost = signal<string[]>([]);
   calculationLogin = signal(false);
+  costServiceResponde = signal<CostInegi[]>([]);
+  totalTollCost = 0;
+  totalOverCost = 0;
+  totalLongKms = 0.0;
+  totalMinTime = 0.0;
+  totalWarnings = '';
+  elementsInListOfCost = signal<DetailCostData[]>([]);
 
   //Variables para consumo de servicios
   inegiService = inject(InegiService);
   userService = inject(UserService);
-  router = inject(Router);
-  costServiceResponde = signal<CostInegi[]>([])
+  router = inject(Router)
 
   // Variables para Leaflet para los mapas
   private map!: L.Map;
@@ -364,26 +372,46 @@ export default class PriceDashboard implements AfterViewInit{
     //Si no existen errores ahora si se va a realizar las peticiones
     if (!this.calculationLogin()){
       this.calculationLogin.set(true);
-      this.calculateRouteCost();
+      // Seteamos todas las variables a cero
+      this.costServiceResponde.set([]);
+      this.totalTollCost = 0;
+      this.totalOverCost = 0;
+      this.totalLongKms = 0.0;
+      this.totalMinTime = 0.0;
+      this.totalWarnings = '';
+      this.elementsInListOfCost.set([]);
+      // Se llama el servicio tantos destinos existan
+      this.calculateRouteCost(0);
     }
   }
 
-  calculateRouteCost(): void{
+  calculateRouteCost(index: number): void{
     const sessionToken = this.getSessionToken();
-    const originIdDes = this.origenSeleccionado()?.id_dest || '';
-    const destinationIdDes = this.destinosSeleccionados()[0].id_dest;
+    let originIdDes = '';
+    if (index == 0){
+      originIdDes = this.origenSeleccionado()?.id_dest || '';
+    }else{
+      originIdDes = this.destinosSeleccionados()[index - 1].id_dest;
+    }
+
+    const destinationIdDes = this.destinosSeleccionados()[index].id_dest;
     const vehicleStr = this.selectedVehicle().toString();
     const overStr = this.selectedOver().toString();
 
     this.inegiService.calculateRoute(originIdDes,destinationIdDes, vehicleStr, overStr, sessionToken).subscribe({
       next: (response) => {
-        // Se limpia el mapa antes de agregar nuevos puntos
-        this.cleanMap();
-        this.calculationLogin.set(false);
-        //
-        // Mostramos los puntos en el mapa
-        this.costServiceResponde.set([response]);
-        this.setRoutetInMap(response);
+        // LLenamos el arreglo de rutas obtenidas en el servicio
+        this.costServiceResponde.update((current) => [...current, response]);
+        if (index == 0){
+          // Se limpia el mapa antes de agregar nuevos puntos
+          this.cleanMap();
+        }
+        if (index == this.destinosSeleccionados().length - 1){
+          this.calculationLogin.set(false);
+          this.setResultCostInList();
+        }else{
+          this.calculateRouteCost(index + 1);
+        }
       },
       error: (error: HttpErrorResponse) => {
         // Mostrar el mensaje de error del servidor
@@ -391,5 +419,105 @@ export default class PriceDashboard implements AfterViewInit{
         this.calculationLogin.set(false);
       }
     })
+  }
+
+  setResultCostInList(){
+    //Ya se tienen todas los calculos de las rutas en el arreglo costServiceResponde, se itera para obtener las sumas de los resultados
+    for (let index = 0; index < this.costServiceResponde().length; index++) {
+      const element = this.costServiceResponde()[index];
+      this.totalTollCost += element.costo_caseta;
+      this.totalOverCost += element.eje_excedente || 0;
+      this.totalLongKms += element.long_km;
+      this.totalMinTime += element.tiempo_min;
+      if (element.advertencia != ''){
+        if (this.totalWarnings == ''){
+          this.totalWarnings = element.advertencia;
+        }else{
+          this.totalWarnings += '\n' + element.advertencia;
+        }
+      }
+      this.setRoutetInMap(element);
+    }
+    // Cuando ya se setearon las variables, construimos el listado de los elemenos a mostrar
+    let tollCost: DetailCostData = {
+      id: 1,
+      bgColor: '#f26a525b',
+      iconColor: '#8C2626',
+      icon: 'fa-solid fa-hand-holding-dollar',
+      title: 'Costo total de las casetas',
+      value: this.totalTollCost == 0 ? 'No hay costo de peaje en esta ruta' : '$' + this.totalTollCost +'.00',
+      btnDetail: this.totalTollCost == 0 ? false : true
+    };
+    let overCost: DetailCostData = {
+      id: 2,
+      bgColor: '#f26a525b',
+      iconColor: '#8C2626',
+      icon: 'fa-solid fa-truck-moving',
+      title: 'Costo total de los ejes excedentes',
+      value: '$' + this.totalOverCost +'.00',
+      btnDetail: this.totalOverCost == 0 ? false : true
+    };
+    let longKms: DetailCostData = {
+      id: 3,
+      bgColor: '#f26a525b',
+      iconColor: '#8C2626',
+      icon: 'fa-solid fa-route',
+      title: 'Total de kilometros',
+      value: this.totalLongKms +' Kms',
+      btnDetail: false
+    };
+    let totalTime: DetailCostData = {
+      id: 4,
+      bgColor: '#f26a525b',
+      iconColor: '#8C2626',
+      icon: 'fa-solid fa-hourglass-half',
+      title: 'Total de tiempoe estimado',
+      value: this.convertMinutesToDescription(this.totalMinTime),
+      btnDetail: false
+    };
+    let warnings: DetailCostData = {
+      id: 5,
+      bgColor: '#f26a525b',
+      iconColor: '#8C2626',
+      icon: 'fa-solid fa-triangle-exclamation',
+      title: 'Advertencias en la ruta',
+      value: this.totalWarnings,
+      btnDetail: false
+    };
+
+    let newElementsOfList:DetailCostData[] = [tollCost]
+    if (this.totalOverCost != 0){
+      newElementsOfList.push(overCost)
+    }
+    newElementsOfList.push(longKms);
+    newElementsOfList.push(totalTime);
+    if (this.totalWarnings != ''){
+      newElementsOfList.push(warnings)
+    }
+    this.elementsInListOfCost.set(newElementsOfList);
+  }
+
+  openDetailOfRoutes(isOpen: boolean){
+    console.log('Aqui se realizara el consumo del servicio para los detalles');
+  }
+
+  //Utilidades
+  convertMinutesToDescription(min: number): string {
+    // 1. Convertir minutos decimales a segundos totales
+    const totalSec = Math.round(min * 60);
+
+    // 2. Calcular horas
+    const hour = Math.floor(totalSec / 3600);
+
+    // 3. Calcular minutos restantes
+    const restMinutes = Math.floor((totalSec % 3600) / 60);
+
+    // 4. Calcular segundos restantes
+    const seconds = totalSec % 60;
+
+    // 5. Formatear con ceros a la izquierda si es necesario y retornar string
+    const formatear = (val: number) => val < 10 ? `0${val}` : val;
+
+    return `${hour} h ${formatear(restMinutes)} min ${formatear(seconds)} seg`;
   }
 }
