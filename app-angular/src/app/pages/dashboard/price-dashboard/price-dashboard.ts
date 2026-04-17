@@ -46,7 +46,8 @@ export default class PriceDashboard implements AfterViewInit{
 
   // Variables para obtencion de costos
   errorsFormCost = signal<string[]>([]);
-  calculationLogin = signal(false);
+  calculationLoading = signal(false);
+  detailLoading = signal(false);
   costServiceResponde = signal<CostInegi[]>([]);
   totalTollCost = 0;
   totalOverCost = 0;
@@ -370,8 +371,8 @@ export default class PriceDashboard implements AfterViewInit{
     }
 
     //Si no existen errores ahora si se va a realizar las peticiones
-    if (!this.calculationLogin()){
-      this.calculationLogin.set(true);
+    if (!this.calculationLoading()){
+      this.calculationLoading.set(true);
       // Seteamos todas las variables a cero
       this.costServiceResponde.set([]);
       this.totalTollCost = 0;
@@ -407,7 +408,7 @@ export default class PriceDashboard implements AfterViewInit{
           this.cleanMap();
         }
         if (index == this.destinosSeleccionados().length - 1){
-          this.calculationLogin.set(false);
+          this.calculationLoading.set(false);
           this.setResultCostInList();
         }else{
           this.calculateRouteCost(index + 1);
@@ -416,7 +417,7 @@ export default class PriceDashboard implements AfterViewInit{
       error: (error: HttpErrorResponse) => {
         // Mostrar el mensaje de error del servidor
         this.errorsFormCost.set([error.error.error.message]);
-        this.calculationLogin.set(false);
+        this.calculationLoading.set(false);
       }
     })
   }
@@ -471,7 +472,7 @@ export default class PriceDashboard implements AfterViewInit{
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-hourglass-half',
-      title: 'Total de tiempoe estimado',
+      title: 'Total de tiempo estimado',
       value: this.convertMinutesToDescription(this.totalMinTime),
       btnDetail: false
     };
@@ -498,7 +499,7 @@ export default class PriceDashboard implements AfterViewInit{
   }
 
   openDetailOfRoutes(isOpen: boolean){
-    console.log('Aqui se realizara el consumo del servicio para los detalles');
+    // Cuando se pulse el boton de opcion, vamos a consumir el
   }
 
   //Utilidades

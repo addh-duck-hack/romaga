@@ -206,7 +206,7 @@
                     </span>
                   }
                 }
-                @if (calculationLogin()) {
+                @if (calculationLoading()) {
                   <div class="mt-4">
                     <skeleton-content-loader />
                   </div>
@@ -224,6 +224,11 @@
                 <!-- Finaliza boton para nuevo calculo -->
               }
               <!-- ------------------------------------------------------------------------------- -->
+               @if (detailLoading()) {
+                <div class="mt-4">
+                  <skeleton-content-loader />
+                </div>
+              }
             </form>
           </div>
           <!-- ------------------------------------------------------------------------------- -->
