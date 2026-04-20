@@ -6,10 +6,11 @@ import { SectionSeparator } from 'src/app/shared/components/section-separator/se
 import { BlankSeparator } from 'src/app/shared/components/blank-separator/blank-separator';
 import { ServiceCards } from 'src/app/shared/components/service-cards/service-cards';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+import { ColorCarousel } from 'src/app/shared/components/color-carousel/color-carousel';
 
 @Component({
   selector: 'home',
-  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards, MainFooter],
+  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards, MainFooter, ColorCarousel],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -17,8 +18,8 @@ export default class Home {
   separator1:SectionItem = {
     id: 0,
     title: 'Experiencia',
-    description: 'Por más de 20 años Transportes ROMAGA, se ha desarrollado en la industria del transporte de carga federal, brindando sus servicios en diferentes partes de la República Mexicana.\n Se ha consolidado en el estado de Veracruz, enfatizando su experiencia en el servicio de transporte a empresas del ramo petrolero, por más de 15 años.',
-    image: 'images/photo_9.png',
+    description: 'Nos especializamos en ofrecer soluciones integrales de transporte de carga general y especializada, garantizando seguridad, puntualidad y eficiencia en cada servicio. Con más de 20 años de experiencia en el sector, somos el aliado estratégico de empresas que requieren logística confiable y adaptada a sus necesidades.',
+    image: 'images/fondo-1.jpg',
     route: '/section1'
   };
 

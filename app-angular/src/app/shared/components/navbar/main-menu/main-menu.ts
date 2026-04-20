@@ -12,7 +12,7 @@ import { NavbarItem } from 'src/app/shared/interfaces/navbar-item.interface';
 })
 export class MainMenu {
   menuItems: NavbarItem[] = [
-    { id: 1, name: 'Home Principal', route: '/' },
+    { id: 1, name: 'Inicio', route: '/' },
     { id: 2, name: 'Acerca de nosotros', route: '/sobre-nosotros' },
     { id: 3, name: 'Servicios', route: '/servicios', subItems: [
       { id: 31, name: 'Suministro de agua', route: '/servicios' },
@@ -20,6 +20,6 @@ export class MainMenu {
       { id: 33, name: 'Materiales y residuos peligrosos', route: '/servicios' },
       { id: 34, name: 'Carga general', route: '/servicios' }
     ]},
-    { id: 4, name: 'Contactanos', route: '/contacto' }
+    { id: 4, name: 'Contacto', route: '/contacto' }
   ];
 }

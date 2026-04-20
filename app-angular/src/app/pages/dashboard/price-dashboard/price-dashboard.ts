@@ -356,11 +356,6 @@ export default class PriceDashboard implements AfterViewInit{
   // Funciones para los selects
   selectVehicle(value: string) {
     let valueNum = Number(value);
-    if (valueNum > 4){
-      this.selectedOver.set(-1);
-    }else{
-      this.selectedOver.set(0);
-    }
     this.selectedVehicle.set(valueNum);
     // Cuando se cambia tipo de vehiculo, tambien limpiamos los resultados
     this.costServiceResponde.set([]);
@@ -472,6 +467,15 @@ export default class PriceDashboard implements AfterViewInit{
       }
       this.setRoutetInMap(element);
     }
+    // Formamos la variable para mostrar el costo de la caseta mas los excedentes
+    let titleTolls = 'Costo total de las casetas';
+    let valueTolls = this.totalTollCost == 0 ? 'No hay costo de peaje en esta ruta' : '$' + this.totalTollCost +'.00';
+    if (this.totalOverCost != 0){
+      titleTolls += ' + ejes excedentes';
+      let totalTollOver = this.totalTollCost + this.totalOverCost
+      valueTolls = '$' + totalTollOver +'.00';
+    }
+
     // Cuando ya se setearon las variables, construimos el listado de los elemenos a mostrar
     let tollCost: DetailCostData = {
       id: 1,
@@ -479,24 +483,13 @@ export default class PriceDashboard implements AfterViewInit{
       iconColor: '#8C2626',
       icon: 'fa-solid fa-hand-holding-dollar',
       titleStrong: '',
-      title: 'Costo total de las casetas',
-      value: this.totalTollCost == 0 ? 'No hay costo de peaje en esta ruta' : '$' + this.totalTollCost +'.00',
+      title: titleTolls,
+      value: valueTolls,
       subValue: '',
       btnDetail: this.totalTollCost == 0 ? false : true
     };
-    let overCost: DetailCostData = {
-      id: 2,
-      bgColor: '#f26a525b',
-      iconColor: '#8C2626',
-      icon: 'fa-solid fa-truck-moving',
-      titleStrong: '',
-      title: 'Costo total de los ejes excedentes',
-      value: '$' + this.totalOverCost +'.00',
-      subValue: '',
-      btnDetail: this.totalOverCost == 0 ? false : true
-    };
     let longKms: DetailCostData = {
-      id: 3,
+      id: 2,
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-route',
@@ -507,7 +500,7 @@ export default class PriceDashboard implements AfterViewInit{
       btnDetail: false
     };
     let totalTime: DetailCostData = {
-      id: 4,
+      id: 3,
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-hourglass-half',
@@ -518,7 +511,7 @@ export default class PriceDashboard implements AfterViewInit{
       btnDetail: false
     };
     let warnings: DetailCostData = {
-      id: 5,
+      id: 4,
       bgColor: '#f26a525b',
       iconColor: '#8C2626',
       icon: 'fa-solid fa-triangle-exclamation',
@@ -530,9 +523,6 @@ export default class PriceDashboard implements AfterViewInit{
     };
 
     let newElementsOfList:DetailCostData[] = [tollCost]
-    if (this.totalOverCost != 0){
-      newElementsOfList.push(overCost)
-    }
     newElementsOfList.push(longKms);
     newElementsOfList.push(totalTime);
     if (this.totalWarnings != ''){
@@ -542,6 +532,8 @@ export default class PriceDashboard implements AfterViewInit{
   }
 
   newCalculation(){
+    this.selectedOver.set(0);
+    this.selectedVehicle.set(-1);
     this.elementsInListOfCost.set([])
     this.showDetails.set(false);
   }

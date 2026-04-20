@@ -6,9 +6,22 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
 }
 
-.description-separator>h2, .description-separator>p {
+.description-separator{
+  background-color: rgba(255, 255, 255, 0.4);
+  padding: 3em 3em;
+  border-radius: 10px;
+  border: 1px solid #D7D7D9;
+}
+
+.description-separator>h2 {
   text-align: center;
-  color: #D7D7D9;
+  color: #1A1A1A;
+}
+
+.description-separator>p{
+  text-align: justify;
+  color: #1A1A1A;
 }

@@ -171,26 +171,24 @@
                 </div>
                 <!-- Termina optionInput para seleccionar el tipo de vehiculo del cual se requiere la consulta  -->
                 <!-- ------------------------------------------------------------------------------- -->
-                @if (selectedVehicle() > 4) {
-                  <!-- optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
-                  <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
-                    <i class="fa-solid fa-truck-moving price-form-icon"></i>
-                    <select
-                      #selectOptionOver
-                      id="over"
-                      class="w-full"
-                      (change)="selectOver(selectOptionOver.value)"
-                    >
-                      <option selected>Selecciona el numero de ejes excedentes</option>
-                      @for (overValue of valuesOfOver; track overValue) {
-                        <option value="{{overValue}}">
-                          {{namesOfOver[overValue]}}
-                        </option>
-                      }
-                    </select>
-                  </div>
-                  <!-- Termina optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
-                }
+                <!-- optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
+                <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
+                  <i class="fa-solid fa-truck-moving price-form-icon"></i>
+                  <select
+                    #selectOptionOver
+                    id="over"
+                    class="w-full"
+                    (change)="selectOver(selectOptionOver.value)"
+                  >
+                    <option value="0" selected>Selecciona el numero de ejes excedentes</option>
+                    @for (overValue of valuesOfOver; track overValue) {
+                      <option value="{{overValue}}">
+                        {{namesOfOver[overValue]}}
+                      </option>
+                    }
+                  </select>
+                </div>
+                <!-- Termina optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
                 <!-- ------------------------------------------------------------------------------- -->
                 <!-- Boton para obtener costos de casetas -->
                 <button

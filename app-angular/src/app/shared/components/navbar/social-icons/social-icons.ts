@@ -17,9 +17,7 @@ export class SocialIcons {
   constructor(){
     this.socialItems.set([
       { id: 1, name: 'WhatsApp', icon: 'fa-brands fa-whatsapp', url: 'https://wa.me/7717742823', newPage: true },
-      { id: 2, name: 'Twitter', icon: 'fab fa-twitter', url: 'https://twitter.com/romaga', newPage: true },
-      { id: 3, name: 'LinkedIn', icon: 'fab fa-linkedin-in', url: 'https://www.linkedin.com/company/romaga', newPage: true },
-      { id: 4, name: 'Instagram', icon: 'fab fa-instagram', url: 'https://www.instagram.com/romaga', newPage: true }
+      { id: 2, name: 'Twitter', icon: 'fab fa-facebook', url: 'https://twitter.com/romaga', newPage: true }
     ]);
     if(this.userService.isTokenValid()){
       this.socialItems.update(items => [...items, { id: 5, name: 'Dashboard', icon: 'fa-solid fa-user', url: '/dashboard', newPage: false }]);

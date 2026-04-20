@@ -4,4 +4,9 @@
 
 .navbar-color{
   background-color: white;
+  border-bottom: 3px solid #8C2626;
+}
+
+.menu-principal{
+  margin-left: auto;
 }
