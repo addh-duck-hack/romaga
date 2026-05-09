@@ -3,7 +3,7 @@
 }
 
 .card-content>h3 {
-  color: #8C2626;
+  color: var(--first-color);
 }
 
 .card-content>p {
@@ -11,5 +11,5 @@
 }
 
 .card-content>a {
-  color: #8C2626;
+  color: var(--first-color);
 }

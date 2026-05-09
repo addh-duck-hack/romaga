@@ -7,10 +7,12 @@ import { BlankSeparator } from 'src/app/shared/components/blank-separator/blank-
 import { ServiceCards } from 'src/app/shared/components/service-cards/service-cards';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 import { ColorCarousel } from 'src/app/shared/components/color-carousel/color-carousel';
+import {CountersComp} from 'src/app/shared/components/counters/counters'
 
 @Component({
   selector: 'home',
-  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards, MainFooter, ColorCarousel],
+  standalone: true,
+  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards, MainFooter, ColorCarousel, CountersComp],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

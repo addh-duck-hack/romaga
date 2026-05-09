@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.contCounters {
+  background: url('/images/fondo-2.jpg');
+  background-size: 100%;
+  background-position-y: center;
+}
+
+.contCounters .contCount {
+  color: #FFFFFF;
+  text-shadow: 
+    -1px -1px 0 var(--first-color),  
+     1px -1px 0 var(--first-color),
+    -1px  1px 0 var(--first-color),
+     1px  1px 0 var(--first-color);
+  width: 50%;
+  height: 10rem;
+  display: inline-block;
+  font-family: 'Roboto';
+  font-weight: bold;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.contCounters .contCount .layout {
+  height: 50%;
+  width: 100%;
+  display: inline-block;
+  transition: all 0.2s ease-in-out;
+}
+
+.contCounters .contCount .layout:nth-child(1) {
+  padding-top: 20px;
+}

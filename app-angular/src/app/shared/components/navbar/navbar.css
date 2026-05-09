@@ -4,7 +4,7 @@
 
 .navbar-color{
   background-color: white;
-  border-bottom: 3px solid #8C2626;
+  border-bottom: 3px solid var(--first-color);
 }
 
 .menu-principal{
