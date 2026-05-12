@@ -1,11 +1,16 @@
 <!-- component -->
 <div class="contCounters">
+  <span class="text-2xl font-semibold tittleCont"><h3>Nuestros servicios</h3></span>
   <div class="contCount cont1">
-    <span class="layout">Clientes atendidos</span>
-    <span class="layout">{{ contCli }}</span>
+    <span class="number">{{ contKil.toLocaleString('en-US') }}</span>
+    <span class="layout">Kilómetros recorridos</span>
   </div>
   <div class="contCount cont2">
-    <span class="layout">Servicios otorgados</span>
-    <span class="layout">{{ contServ }}</span>
+    <span class="number">{{ contlit.toLocaleString('en-US') }}</span>
+    <span class="layout">Litros de agua entregados</span>
+  </div>
+  <div class="contCount cont3">
+    <span class="number">{{ contMani.toLocaleString('en-US') }}</span>
+    <span class="layout">Maniobras de maquianria</span>
   </div>
 </div>

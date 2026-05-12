@@ -10,25 +10,35 @@ import { interval, takeWhile } from 'rxjs';
   styleUrls: ['./counters.css']
 })
 export class CountersComp implements OnInit {
-  @Input() clientes: number = 217;
-  @Input() servicios: number = 1974;
-  contCli: number = 0;
-  contServ: number = 0;
+  @Input() kilometros: number = 150000;
+  @Input() litros: number = 1974;
+  @Input() maniobras: number = 2800;
+
+  contKil: number = 0;
+  contlit: number = 0;
+  contMani: number = 0;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    interval(20)
-      .pipe(takeWhile(() => this.contCli < this.clientes))
+    interval(.5)
+      .pipe(takeWhile(() => this.contKil < this.kilometros))
       .subscribe(() => {
-        this.contCli++;
+        this.contKil++;
         this.cdr.detectChanges();
       });
 
-    interval(20)
-      .pipe(takeWhile(() => this.contServ < this.servicios))
+    interval(10)
+      .pipe(takeWhile(() => this.contlit < this.litros))
       .subscribe(() => {
-        this.contServ++;
+        this.contlit++;
+        this.cdr.detectChanges();
+      });
+
+    interval(10)
+      .pipe(takeWhile(() => this.contMani < this.maniobras))
+      .subscribe(() => {
+        this.contMani++;
         this.cdr.detectChanges();
       });
   }
