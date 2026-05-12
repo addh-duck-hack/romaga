@@ -39,7 +39,7 @@
 }
 
 .item-menu:hover {
-  color: #8C2626;
+  color: var(--first-color);
   background-color: rgba(148, 163, 184, 0.2);
 }
 
