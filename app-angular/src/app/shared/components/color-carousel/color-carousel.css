@@ -9,8 +9,55 @@
 
 .img-carousel-color{
   width: 100%;
-    height: 100vh;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+  height: 100vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.content-container{
+  /* background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 1em; */
+  max-width: 45vw;
+  margin: 2em 10em;
+  padding: 1em 3em;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+.content-container.slide-in{
+  animation: slideInFromRight 1.2s ease-out forwards;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(80%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.active {
+  opacity: 1 !important;
+  width: 2.5rem !important;
+}
+
+.carousel-title{
+  color: var(--second-color);
+  text-shadow: -5px 3px 3px var(--first-color);
+  font-size: 4em;
+  font-weight: bold;
+}
+
+.carousel-description{
+  color: var(--second-color);
+  text-shadow: -3px 0px 1px black;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: justify;
 }
