@@ -1,52 +1,31 @@
 <!-- component -->
-<div class="color-carousel relative w-full bg-slate-800">
-  @for (item of carouselItems; track item.id; let i = $index) {
-    @if (i == 0) {
-      <input
-        [class]="'hidden peer/slider' + item.id +' checkbox'"
-        type="radio"
-        name="slider"
-        [id]="'slider' + item.id"
-        checked
-      />
-    }
-    @else{
-      <input
-        [class]="'hidden peer/slider' + item.id +' checkbox'"
-        type="radio"
-        name="slider"
-        [id]="'slider' + item.id"
-      />
-    }
-  }
+<div class="relative w-full color-carousel bg-slate-800">
   <div
-    [class]="classOfMainCarousel()"
+    class="relative h-[100%] flex transition-all duration-500 ease-in-out"
+    [style.width.%]="carouselItems.length * 100"
+    [style.transform]="'translateX(-' + currentIndex() * (100 / carouselItems.length) + '%)'"
   >
     @for (item of carouselItems; track item.id; let i = $index) {
       <div
         [style.backgroundImage]="'url(' + item.image + ')'"
         class="img-carousel-color relative w-full h-full flex">
+        <div class="content-container block" [class.slide-in]="currentIndex() === i">
+          <h2 class="carousel-title mb-4">{{ item.title }}</h2>
+          <p class="carousel-description">{{ item.description }}</p>
+        </div>
       </div>
     }
   </div>
 
   <div
-    class="absolute w-full flex justify-center gap-2 bottom-12 peer-[&_label:nth-of-type(1)]/slider1:peer-checked/slider1:opacity-100 peer-[&_label:nth-of-type(1)]/slider1:peer-checked/slider1:w-10 peer-[&_label:nth-of-type(2)]/slider2:peer-checked/slider2:opacity-100 peer-[&_label:nth-of-type(2)]/slider2:peer-checked/slider2:w-10 peer-[&_label:nth-of-type(3)]/slider3:peer-checked/slider3:opacity-100 peer-[&_label:nth-of-type(3)]/slider3:peer-checked/slider3:w-10"
+    class="absolute w-full flex justify-center gap-2 bottom-12"
   >
-    <label
-      class="block w-5 h-5 bg-white cursor-pointer opacity-50 z-10 transition-all duration-300 ease-in-out hover:scale-125 hover:opacity-100"
-      for="slider1"
-    >
-    </label>
-    <label
-      class="block w-5 h-5 bg-white cursor-pointer opacity-50 z-10 transition-all duration-300 ease-in-out hover:scale-125 hover:opacity-100"
-      for="slider2"
-    >
-    </label>
-    <label
-      class="block w-5 h-5 bg-white cursor-pointer opacity-50 z-10 transition-all duration-300 ease-in-out hover:scale-125 hover:opacity-100"
-      for="slider3"
-    >
-    </label>
+    @for (item of carouselItems; track item.id; let i = $index) {
+      <button
+        class="block w-5 h-5 bg-white cursor-pointer opacity-50 z-10 transition-all duration-300 ease-in-out hover:opacity-100"
+        [class.active]="currentIndex() === i"
+        (click)="goToSlide(i)"
+      ></button>
+    }
   </div>
 </div>
