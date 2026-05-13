@@ -8,11 +8,13 @@ import { ServiceCards } from 'src/app/shared/components/service-cards/service-ca
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 import { ColorCarousel } from 'src/app/shared/components/color-carousel/color-carousel';
 import {CountersComp} from 'src/app/shared/components/counters/counters'
+import { ImageCard } from 'src/app/shared/components/image-card/image-card';
+import { Testimonial } from 'src/app/shared/components/testimonial/testimonial';
 
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards, MainFooter, ColorCarousel, CountersComp],
+  imports: [Navbar, SectionSeparator, BlankSeparator, ServiceCards, MainFooter, ColorCarousel, CountersComp, ImageCard, Testimonial],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
