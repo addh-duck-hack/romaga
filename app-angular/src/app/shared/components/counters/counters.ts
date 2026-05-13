@@ -21,21 +21,23 @@ export class CountersComp implements OnInit {
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    interval(.5)
+    const duration = 2500; // ms
+    const step = this.kilometros / duration;
+    interval(1)
       .pipe(takeWhile(() => this.contKil < this.kilometros))
       .subscribe(() => {
-        this.contKil++;
+        this.contKil += step;
         this.cdr.detectChanges();
       });
 
-    interval(10)
+    interval(1)
       .pipe(takeWhile(() => this.contlit < this.litros))
       .subscribe(() => {
         this.contlit++;
         this.cdr.detectChanges();
       });
 
-    interval(10)
+    interval(1)
       .pipe(takeWhile(() => this.contMani < this.maniobras))
       .subscribe(() => {
         this.contMani++;
