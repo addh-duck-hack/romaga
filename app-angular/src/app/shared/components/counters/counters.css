@@ -12,10 +12,10 @@
   color: var(--first-color);
   display: inline-block;
   width: 100%;
-  height: 3rem;
+  height: 6rem;
   text-align: center;
-  margin-top: 1rem;
   font-size: 3rem;
+  align-content: center;
 }
 
 .contCounters .contCount {
@@ -28,16 +28,16 @@
 }
 
 .contCounters .contCount .number {
-  height: 50%;
   width: 100%;
   display: inline-block;
   transition: all 0.2s ease-in-out;
-  font-size: 2rem;
+  font-size: 1.5rem;
   align-content: center;
+  color: #FFFFFF;
 }
 
 .contCounters .contCount .layout {
-  height: 50%;
+  height: calc(100% - 6rem);
   width: 100%;
   display: inline-block;
   transition: all 0.2s ease-in-out;
@@ -47,4 +47,13 @@
 
 .contCounters .contCount .layout:nth-child(1) {
   padding-top: 20px;
+}
+
+.countRounded {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  margin: auto;
+  align-content: center;
+  background-color: var(--first-color);
 }
