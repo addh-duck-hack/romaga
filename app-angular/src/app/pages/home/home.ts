@@ -8,11 +8,13 @@ import { ServiceCards } from 'src/app/shared/components/service-cards/service-ca
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 import { ColorCarousel } from 'src/app/shared/components/color-carousel/color-carousel';
 import {CountersComp} from 'src/app/shared/components/counters/counters'
+import { ImageCard } from 'src/app/shared/components/image-card/image-card';
+import { Testimonial } from 'src/app/shared/components/testimonial/testimonial';
 
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [Navbar, MainCarousel, SectionSeparator, BlankSeparator, ServiceCards, MainFooter, ColorCarousel, CountersComp],
+  imports: [Navbar, SectionSeparator, BlankSeparator, ServiceCards, MainFooter, ColorCarousel, CountersComp, ImageCard, Testimonial],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -22,7 +24,7 @@ export default class Home {
     title: 'Experiencia',
     description: 'Nos especializamos en ofrecer soluciones integrales de transporte de carga general y especializada, garantizando seguridad, puntualidad y eficiencia en cada servicio. Con más de 20 años de experiencia en el sector, somos el aliado estratégico de empresas que requieren logística confiable y adaptada a sus necesidades.',
     image: 'images/fondo-1.jpg',
-    route: '/section1'
+    route: '/contacto'
   };
 
   cardsServices:SectionItem[] = [
