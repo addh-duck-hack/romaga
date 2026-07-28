@@ -77,6 +77,7 @@ const mailRoutes = require("./routes/mail.routes");
 const uploadRoutes = require("./routes/upload.routes");
 const destinationRoutes = require("./routes/destination.routes")
 const routeCostRoutes = require("./routes/route.cost.routes")
+const movilRoutes = require("./routes/movil.routes");
 
 app.use(cors(corsOptions));
 app.use(
@@ -90,8 +91,9 @@ app.use(
 app.use("/api/ds/users", userRoutes);
 app.use("/api/ds/mail", mailRoutes);
 app.use("/api/ds/uploads", uploadRoutes);
-app.use("/api/ds/destination",destinationRoutes)
-app.use("/api/ds/route/cost", routeCostRoutes)
+app.use("/api/ds/destination", destinationRoutes);
+app.use("/api/ds/route/cost", routeCostRoutes);
+app.use("/api/ds/movil", movilRoutes);
 
 // Servir la carpeta uploads como estática
 const uploadsDir = resolveUploadsDir();

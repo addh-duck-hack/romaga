@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: >
     API base del proyecto CRM/eCommerce (estado actual).
-    Incluye autenticación, gestión de usuarios, contacto por correo y archivos públicos.
+    Incluye autenticación, gestión de usuarios, contacto por correo, subida de archivos y consumo de servicios externos.
 servers:
   - url: http://localhost:5000
     description: Local backend
@@ -15,8 +15,11 @@ tags:
   - name: Users
   - name: Mail
   - name: Uploads
+  - name: Destination
+  - name: Movil
+  - name: RouteCost
 paths:
-  /api/users/register:
+  /api/ds/users/register:
     post:
       tags: [Auth]
       summary: Registrar usuario customer
@@ -35,14 +38,19 @@ paths:
                 $ref: "#/components/schemas/RegisterResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "403":
+          description: Clave de cliente inválida o datos faltantes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "409":
           $ref: "#/components/responses/EmailAlreadyRegistered"
         "429":
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
-  /api/users/verify:
+  /api/ds/users/verify:
     get:
       tags: [Auth]
       summary: Verificar cuenta por token de correo
@@ -67,8 +75,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "404":
           $ref: "#/components/responses/UserNotFound"
-
-  /api/users/login:
+  /api/ds/users/login:
     post:
       tags: [Auth]
       summary: Iniciar sesión
@@ -103,8 +110,59 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
-  /api/users:
+  /api/ds/users/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Solicitar restablecimiento de contraseña
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+      responses:
+        "200":
+          description: Enlace de restablecimiento enviado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          description: Clave de cliente inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/ds/users/reset-password:
+    post:
+      tags: [Auth]
+      summary: Restablecer contraseña con token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+      responses:
+        "200":
+          description: Contraseña cambiada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/ds/users:
     get:
       tags: [Users]
       summary: Listar usuarios
@@ -125,8 +183,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
-  /api/users/{id}:
+  /api/ds/users/{id}:
     get:
       tags: [Users]
       summary: Obtener usuario por id
@@ -151,7 +208,6 @@ paths:
           $ref: "#/components/responses/UserNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
     put:
       tags: [Users]
       summary: Actualizar usuario (datos generales y/o rol)
@@ -185,7 +241,6 @@ paths:
           $ref: "#/components/responses/UserNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
     delete:
       tags: [Users]
       summary: Eliminar usuario por id
@@ -210,8 +265,7 @@ paths:
           $ref: "#/components/responses/UserNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
-  /api/users/{id}/password:
+  /api/ds/users/{id}/password:
     patch:
       tags: [Users]
       summary: Cambiar contraseña del usuario autenticado
@@ -242,8 +296,7 @@ paths:
           $ref: "#/components/responses/UserNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
-  /api/mail/send-email:
+  /api/ds/mail/send-email:
     post:
       tags: [Mail]
       summary: Enviar correo de contacto
@@ -270,8 +323,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
-  /api/uploads/products-image:
+  /api/ds/uploads/products-image:
     post:
       tags: [Uploads]
       summary: Subir imagen de producto
@@ -307,8 +359,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
-  /uploads/{fileName}:
+  /api/ds/uploads/{fileName}:
     get:
       tags: [Uploads]
       summary: Obtener archivo estático subido
@@ -321,9 +372,104 @@ paths:
       responses:
         "200":
           description: Archivo servido por Express static
+          content:
+            application/octet-stream: {}
         "404":
           $ref: "#/components/responses/RouteNotFound"
-
+  /api/ds/destination/{search}:
+    get:
+      tags: [Destination]
+      summary: Buscar destinos usando INEGI
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: search
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Resultado de búsqueda de destinos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InegiApiResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/ds/movil/home:
+    get:
+      tags: [Movil]
+      summary: Obtener datos de inicio para la app móvil
+      responses:
+        "200":
+          description: Datos de pantalla de inicio móvil
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MovilHomeResponse"
+        "404":
+          description: Contenido móvil de inicio no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/ds/route/cost/calculate:
+    post:
+      tags: [RouteCost]
+      summary: Calcular cuota de ruta
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteCostRequest"
+      responses:
+        "200":
+          description: Resultado de cálculo de cuota
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InegiApiResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/ds/route/cost/details:
+    post:
+      tags: [RouteCost]
+      summary: Obtener detalles de cuota de ruta
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteCostRequest"
+      responses:
+        "200":
+          description: Detalles de cuota de ruta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InegiApiResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 components:
   securitySchemes:
     bearerAuth:
@@ -333,7 +479,6 @@ components:
       description: >
         JWT de acceso (tokenType=access) firmado con HS256.
         Validación estricta de issuer (JWT_ISSUER) y audience (JWT_AUDIENCE).
-
   parameters:
     UserIdParam:
       in: path
@@ -342,7 +487,6 @@ components:
       schema:
         type: string
       description: ObjectId de usuario
-
   responses:
     BadRequest:
       description: Solicitud inválida
@@ -420,7 +564,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
-
   schemas:
     Role:
       type: string
@@ -430,7 +573,6 @@ components:
         - catalog_manager
         - order_manager
         - customer
-
     UserPublic:
       type: object
       properties:
@@ -452,7 +594,6 @@ components:
           type: string
           format: date-time
       required: [_id, name, email, role, isVerified, createdAt]
-
     UserListItem:
       type: object
       properties:
@@ -471,7 +612,6 @@ components:
           type: string
           format: date-time
       required: [_id, name, email, role, isVerified, createdAt]
-
     RegisterRequest:
       type: object
       properties:
@@ -485,8 +625,9 @@ components:
         password:
           type: string
           minLength: 6
-      required: [name, email, password]
-
+        customerKey:
+          type: string
+      required: [name, email, password, customerKey]
     RegisterResponse:
       type: object
       properties:
@@ -495,7 +636,6 @@ components:
         user:
           $ref: "#/components/schemas/UserPublic"
       required: [message, user]
-
     LoginRequest:
       type: object
       properties:
@@ -505,7 +645,6 @@ components:
         password:
           type: string
       required: [email, password]
-
     LoginResponse:
       type: object
       properties:
@@ -516,7 +655,24 @@ components:
         user:
           $ref: "#/components/schemas/UserPublic"
       required: [message, token, user]
-
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        customerKey:
+          type: string
+      required: [email, customerKey]
+    ResetPasswordRequest:
+      type: object
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          minLength: 6
+      required: [token, newPassword]
     UpdateUserRequest:
       type: object
       properties:
@@ -530,7 +686,6 @@ components:
           type: string
           format: binary
           description: Imagen real en formato JPG o PNG (máximo 5MB).
-
     UpdateUserResponse:
       type: object
       properties:
@@ -539,7 +694,6 @@ components:
         user:
           $ref: "#/components/schemas/UserPublic"
       required: [message, user]
-
     ChangePasswordRequest:
       type: object
       properties:
@@ -549,7 +703,6 @@ components:
           type: string
           minLength: 6
       required: [currentPassword, newPassword]
-
     DeleteUserResponse:
       type: object
       properties:
@@ -558,7 +711,6 @@ components:
         user:
           $ref: "#/components/schemas/UserPublic"
       required: [message, user]
-
     ContactEmailRequest:
       type: object
       properties:
@@ -580,14 +732,12 @@ components:
           minLength: 10
           maxLength: 2000
       required: [fullName, email, service, message]
-
     MessageResponse:
       type: object
       properties:
         message:
           type: string
       required: [message]
-
     ProductImageUploadResponse:
       type: object
       properties:
@@ -597,7 +747,40 @@ components:
           type: string
           example: uploads/productImage-1718282784-uuid.jpg
       required: [message, imagePath]
-
+    InegiApiResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: true
+        message:
+          type: string
+        inegi:
+          type: object
+          additionalProperties: true
+      required: [ok, message, inegi]
+    RouteCostRequest:
+      type: object
+      properties:
+        origin:
+          type: string
+        destination:
+          type: string
+        vehicleType:
+          type: string
+        over:
+          type: string
+      required: [origin, destination, vehicleType, over]
+    MovilHomeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          additionalProperties: true
+      required: [status, data]
     ErrorResponse:
       type: object
       properties:
