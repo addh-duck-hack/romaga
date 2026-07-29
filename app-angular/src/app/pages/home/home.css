@@ -1,3 +1,71 @@
 :host {
   display: block;
 }
+
+.hero {
+  position: relative;
+  color: #fff;
+  overflow: hidden;
+  background: #141311;
+}
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(100deg, rgba(20, 19, 17, .94) 8%, rgba(20, 19, 17, .72) 42%, rgba(20, 19, 17, .28) 78%),
+    url('/images/fleet/fleet-lineup.jpg');
+  background-size: cover;
+  background-position: 62% 55%;
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(3.5rem, 6vw, 6rem) clamp(3rem, 5vw, 4.5rem);
+  max-width: 780px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-2xl);
+  line-height: 1.05;
+  text-wrap: balance;
+  margin-top: var(--sp-4);
+  color: #fff;
+}
+.hero p.lede {
+  font-size: clamp(1rem, .92rem + .3vw, 1.12rem);
+  color: #dcd9d0;
+  max-width: 56ch;
+  margin-top: var(--sp-4);
+}
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  align-items: center;
+  margin-top: var(--sp-6);
+}
+.hero-permits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-6);
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-5);
+  border-top: 1px solid rgba(255, 255, 255, .16);
+}
+.hero-permits .lbl {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #9a968b;
+  width: 100%;
+}
+.hero-permits b {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  letter-spacing: .03em;
+  color: #f1efe9;
+}

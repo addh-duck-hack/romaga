@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { ServiceCard } from './service-card/service-card';
-import { SectionItem } from '../../interfaces/section-separator.interface';
+import { SectionItem } from '../../interfaces/service-item.interface';
 
 @Component({
   selector: 'service-cards',

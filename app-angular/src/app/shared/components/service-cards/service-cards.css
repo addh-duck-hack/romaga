@@ -2,6 +2,15 @@
   display: block;
 }
 
-.service-cards-container {
-  background-color: var(--second-color);
+.teaser-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-5);
+}
+
+@media (max-width: 1000px) {
+  .teaser-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .teaser-grid { grid-template-columns: 1fr; }
 }

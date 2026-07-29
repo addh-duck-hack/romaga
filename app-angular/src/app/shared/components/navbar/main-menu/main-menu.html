@@ -1,25 +1,12 @@
-<div class="flex space-x-8">
-  <!-- Items del menu -->
-   @for (item of menuItems; track item.id) {
-    <div class="relative group">
-      <a
-        [routerLink]="item.route"
-        [routerLinkActiveOptions]="{exact: true}"
-        routerLinkActive="item-menu-active"
-        class="item-menu rounded-md px-3 py-2 text-sm font-medium inline-flex items-center">
-        {{item.name}}
-      </a>
-      @if (item.subItems) {
-        <div class="submenu">
-          @for (subItem of item.subItems; track subItem.id) {
-            <a
-              [routerLink]="subItem.route"
-              class="block px-4 py-2 text-sm text-gray-200 hover:bg-white/10 hover:text-white">
-              {{subItem.name}}
-            </a>
-          }
-        </div>
-      }
-    </div>
-   }
+<div class="menu" [class.menu--vertical]="vertical">
+  @for (item of menuItems; track item.id) {
+    <a
+      [routerLink]="item.route"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive="menu-link-active"
+      class="menu-link"
+      (click)="linkClicked.emit()">
+      {{ item.name }}
+    </a>
+  }
 </div>

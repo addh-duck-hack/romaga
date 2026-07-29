@@ -1,0 +1,10 @@
+<div class="stats" [class.stats--light]="variant() === 'light'">
+  <div class="stats-grid">
+    @for (item of items(); track item.id) {
+      <div class="stat">
+        <b>{{ display()[item.id] }}</b>
+        <span>{{ item.label }}</span>
+      </div>
+    }
+  </div>
+</div>

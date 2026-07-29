@@ -1,2 +1,67 @@
 <navbar />
-<p>services works!</p>,
+
+<div class="page-header">
+  <div class="wrap">
+    <div class="crumbs"><a routerLink="/">Inicio</a><span>/</span><span>Servicios</span></div>
+    <span class="eyebrow" style="color:#e7a6a6;">Servicios</span>
+    <h1>Cuatro líneas de servicio, un solo proveedor.</h1>
+    <p>Autotransporte federal para carga general y especializada, con equipo propio para cada tipo de operación y permisos vigentes ante SCT, SEMARNAT, ASEA y CONAGUA.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    @for (svc of serviceDetails; track svc.id; let i = $index) {
+      <div class="svc-detail" [class.svc-detail--reverse]="i % 2 === 1">
+        <div class="svc-detail-media"><img [src]="svc.image" [alt]="svc.title" loading="lazy" /></div>
+        <div class="svc-detail-text">
+          <span class="eyebrow">{{ svc.index }} · {{ svc.title }}</span>
+          <h3>{{ svc.title }}</h3>
+          <p>{{ svc.description }}</p>
+          <div class="spec-chips">
+            @for (spec of svc.specs; track spec) {
+              <span class="spec-chip">{{ spec }}</span>
+            }
+          </div>
+          <a class="btn btn-primary" routerLink="/contacto">{{ svc.cta }}</a>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="section band-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Flotilla y equipo</span>
+        <h2 class="section-title" style="margin-top:.5rem;">Ficha técnica de equipo</h2>
+      </div>
+      <p>Flotilla de tractocamiones quinta rueda y diversidad de remolques y accesorios.</p>
+    </div>
+    <div class="equip-grid">
+      <div class="equip-list">
+        @for (row of equipmentLeft; track row.name) {
+          <div class="equip-row"><span class="name">{{ row.name }}</span><span class="spec">{{ row.spec }}</span></div>
+        }
+      </div>
+      <div class="equip-list">
+        @for (row of equipmentRight; track row.name; let last = $last) {
+          <div class="equip-row" [class.equip-row--last]="last"><span class="name">{{ row.name }}</span><span class="spec">{{ row.spec }}</span></div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap cta-inner">
+    <h2>¿Necesita alguno de estos servicios?</h2>
+    <div>
+      <p>Cuéntenos los detalles de su operación y le preparamos una cotización.</p>
+      <div style="margin-top:var(--sp-5);"><a class="btn btn-primary" routerLink="/contacto">Ir a contacto</a></div>
+    </div>
+  </div>
+</section>
+
+<main-footer />

@@ -1,45 +1,42 @@
-<!-- component -->
-<footer class="w-full main-footer p-8">
-  <div class="flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 bg-white text-center md:justify-between">
-    <img src="{{logo}}" class="mr-5 h-6 sm:h-9" alt="logo" />
+<footer class="main-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img [src]="logo" alt="Transportes ROMAGA" width="53" height="34" />
+      <p>Fletes y Servicios ROMAGA S.A. de C.V. — Autotransporte federal de carga general y especializada, izajes y suministro de agua.</p>
+    </div>
 
-    <ul class="flex flex-wrap items-center gap-y-2 gap-x-8">
-      <li>
-        <a
-          href="#"
-          class="text-slate-700 hover:text-slate-500 focus:text-slate-500 text-sm"
-        >
-          About Us
-        </a>
-      </li>
-      <li>
-        <a
-          href="#"
-          class="text-slate-700 hover:text-slate-500 focus:text-slate-500 text-sm"
-        >
-          License
-        </a>
-      </li>
-      <li>
-        <a
-          href="#"
-          class="text-slate-700 hover:text-slate-500 focus:text-slate-500 text-sm"
-        >
-          Contribute
-        </a>
-      </li>
-      <li>
-        <a
-          href="#"
-          class="text-slate-700 hover:text-slate-500 focus:text-slate-500 text-sm"
-        >
-          Contact Us
-        </a>
-      </li>
-    </ul>
+    <div class="footer-col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a routerLink="/">Inicio</a></li>
+        <li><a routerLink="/servicios">Servicios</a></li>
+        <li><a routerLink="/sobre-nosotros">Nosotros</a></li>
+        <li><a routerLink="/contacto">Contacto</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Permisos</h4>
+      <ul>
+        <li><span>SCT — carga federal</span></li>
+        <li><span>SEMARNAT — residuos peligrosos</span></li>
+        <li><span>ASEA — hidrocarburos</span></li>
+        <li><span>CONAGUA</span></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="tel:+527828861249">Cel. 782 886 1249</a></li>
+        <li><a href="tel:+527821452309">Oficina 782 145 2309</a></li>
+        <li><a href="mailto:transportes@romaga.com.mx">transportes&#64;romaga.com.mx</a></li>
+      </ul>
+    </div>
   </div>
-  <p class="block mb-4 text-sm text-center text-slate-500 md:mb-0 border-t border-slate-200 mt-4 pt-4">
-    Copyright © 2024&nbsp;
-    <a href="https://material-tailwind.com/" target="_blank" rel="noreferrer">Material Tailwind</a>.
-  </p>
+
+  <div class="footer-bottom">
+    <span>&copy; {{ year }} Fletes y Servicios ROMAGA S.A. de C.V.</span>
+    <span>Tihuatlán, Veracruz, México</span>
+  </div>
 </footer>

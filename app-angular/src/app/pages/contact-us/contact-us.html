@@ -1,2 +1,92 @@
 <navbar />
-<p>contact-us works!</p>,
+
+<div class="page-header">
+  <div class="wrap">
+    <div class="crumbs"><a routerLink="/">Inicio</a><span>/</span><span>Contacto</span></div>
+    <span class="eyebrow" style="color:#e7a6a6;">Contacto</span>
+    <h1>Solicite su cotización</h1>
+    <p>Cuéntenos qué necesita transportar —carga, maniobra o agua— y le preparamos una propuesta a la medida de su operación.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="contact-cards">
+        <div class="contact-card">
+          <span class="mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg></span>
+          <div><h3>Teléfonos</h3><p><a href="tel:+527828861249">Cel. 782 886 1249</a></p><p><a href="tel:+527821452309">Oficina 782 145 2309</a></p></div>
+        </div>
+        <div class="contact-card">
+          <span class="mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></span>
+          <div><h3>Correo</h3><p><a href="mailto:transportes@romaga.com.mx">transportes&#64;romaga.com.mx</a></p></div>
+        </div>
+        <div class="contact-card">
+          <span class="mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <div><h3>Base de operaciones</h3><p>Carr. México–Tuxpan Km 191.5, Ejido Ricardo Flores Magón, C.P. 92900, Tihuatlán, Veracruz</p></div>
+        </div>
+        <div class="contact-card">
+          <span class="mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+          <div><h3>Horario</h3><p>Servicio disponible las 24 horas, los 365 días del año.</p></div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h3>Envíenos su solicitud</h3>
+        <p>Todos los campos marcados con * son obligatorios.</p>
+
+        @if (descriptionErrors().length > 0) {
+          <div class="form-alert form-alert--error">
+            <p>Para continuar revisa lo siguiente:</p>
+            <ul>
+              @for (description of descriptionErrors(); track description) {
+                <li>{{ description }}</li>
+              }
+            </ul>
+          </div>
+        }
+        @if (descriptionSuccess() !== '') {
+          <div class="form-success show">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>{{ descriptionSuccess() }}</span>
+          </div>
+        }
+
+        <form (submit)="onFormSubmit($event)" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="fullName">Nombre completo *</label>
+              <input id="fullName" type="text" [value]="fullName()" (input)="fullName.set(txtName.value)" #txtName required />
+            </div>
+            <div class="field">
+              <label for="email">Correo electrónico *</label>
+              <input id="email" type="email" [value]="email()" (input)="email.set(txtEmail.value)" #txtEmail required />
+            </div>
+            <div class="field">
+              <label for="phone">Teléfono</label>
+              <input id="phone" type="tel" [value]="phone()" (input)="phone.set(txtPhone.value)" #txtPhone />
+            </div>
+            <div class="field">
+              <label for="service">Servicio de interés *</label>
+              <select id="service" [value]="service()" (change)="service.set(selService.value)" #selService>
+                @for (svc of services; track svc) {
+                  <option [value]="svc">{{ svc }}</option>
+                }
+              </select>
+            </div>
+            <div class="field full">
+              <label for="message">Mensaje *</label>
+              <textarea id="message" [value]="message()" (input)="message.set(txtMessage.value)" #txtMessage required placeholder="Cuéntenos origen, destino y tipo de carga o servicio que necesita."></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit" [disabled]="sending()">
+            {{ sending() ? 'Enviando…' : 'Enviar solicitud' }}
+          </button>
+          <p class="form-note">Al enviar este formulario acepta ser contactado por Transportes ROMAGA para dar seguimiento a su solicitud.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main-footer />
