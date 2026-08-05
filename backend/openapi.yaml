@@ -420,6 +420,34 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /api/ds/movil/promotion:
+    get:
+      tags: [Movil]
+      summary: Obtener datos de una promoción para la app móvil
+      parameters:
+        - name: target
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Identificador de la promoción (ej. "promo_martes")
+      responses:
+        "200":
+          description: Datos de la promoción móvil
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MovilPromotionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: Promoción móvil no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/ds/route/cost/calculate:
     post:
       tags: [RouteCost]
@@ -772,6 +800,16 @@ components:
           type: string
       required: [origin, destination, vehicleType, over]
     MovilHomeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          additionalProperties: true
+      required: [status, data]
+    MovilPromotionResponse:
       type: object
       properties:
         status:

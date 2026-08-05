@@ -33,3 +33,9 @@ Thumbs.db
 
 #Postmanfiles
 /backend/romaga-postman-collection.json
+
+#Documentos especificos
+CVEmpresarial.pdf
+
+#Scripts
+/backend/scripts/
