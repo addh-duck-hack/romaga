@@ -1,5 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
-import { UserService } from 'src/app/services/user.service';
+import { Component, signal } from '@angular/core';
 import { SocialItem } from 'src/app/shared/interfaces/social-item.interface';
 
 @Component({
@@ -11,18 +10,10 @@ import { SocialItem } from 'src/app/shared/interfaces/social-item.interface';
 export class SocialIcons {
   socialItems = signal<SocialItem[]>([]);
 
-  userService = inject(UserService)
-  sessionActive = this.userService.sessionUser
-
   constructor(){
     this.socialItems.set([
       { id: 1, name: 'WhatsApp', icon: 'fa-brands fa-whatsapp', url: 'https://wa.me/527828861249', newPage: true },
       { id: 2, name: 'Facebook', icon: 'fa-brands fa-facebook', url: 'https://facebook.com/romaga', newPage: true }
     ]);
-    if(this.userService.isTokenValid()){
-      this.socialItems.update(items => [...items, { id: 5, name: 'Dashboard', icon: 'fa-solid fa-user', url: '/dashboard', newPage: false }]);
-    }else{
-      this.socialItems.update(items => [...items, { id: 5, name: 'Login', icon: 'fa-solid fa-user', url: '/login', newPage: false }]);
-    }
   }
 }

@@ -63,7 +63,7 @@ export class StatsStrip implements OnInit, OnDestroy {
   }
 
   private animateItem(id: number, target: number, suffix?: string): void {
-    const duration = 1100;
+    const duration = 2500;
     let start: number | null = null;
     const step = (ts: number) => {
       if (start === null) start = ts;

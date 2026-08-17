@@ -11,7 +11,6 @@
     <main-menu class="nav-links-desktop" (linkClicked)="closeMobile()" />
 
     <div class="nav-side">
-      <a class="nav-phone" href="tel:+527821452309">Oficina 782 145 2309</a>
       <social-icons class="nav-social-desktop" />
       <a class="btn btn-primary nav-cta-desktop" routerLink="/contacto" (click)="closeMobile()">Solicitar cotización</a>
       <button
@@ -29,7 +28,6 @@
   @if (mobileOpen()) {
     <div class="nav-mobile" id="mobileMenu">
       <main-menu [vertical]="true" (linkClicked)="closeMobile()" />
-      <a class="nav-phone nav-phone--mobile" href="tel:+527821452309">Oficina 782 145 2309</a>
       <social-icons />
       <a class="btn btn-primary nav-cta-mobile" routerLink="/contacto" (click)="closeMobile()">Solicitar cotización</a>
     </div>
