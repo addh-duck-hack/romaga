@@ -1,5 +1,5 @@
 # Cambia la imagen base a una versión estable de Node.js
-FROM node:18
+FROM node:22
 
 # Crear y establecer el directorio de la app
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar solo dependencias de producción
-RUN npm install --only=production
+RUN npm install --omit=dev
 
 # Copiar el resto de los archivos
 COPY . .
