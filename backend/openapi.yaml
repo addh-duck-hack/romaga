@@ -17,6 +17,7 @@ tags:
   - name: Uploads
   - name: Destination
   - name: Movil
+  - name: Products
   - name: RouteCost
 paths:
   /api/ds/users/register:
@@ -448,6 +449,31 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /api/ds/products:
+    get:
+      tags: [Products]
+      summary: "[Prueba] Listado de productos, opcionalmente filtrado por categoría"
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            Id de categoría (ej. "cat_01"). Si se omite, regresa todos los
+            productos. El catálogo de categorías no vive en base de datos;
+            solo se filtra por coincidencia exacta de category_id.
+      responses:
+        "200":
+          description: Listado de productos (vacío si la categoría no tiene productos)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/ds/route/cost/calculate:
     post:
       tags: [RouteCost]
@@ -818,6 +844,53 @@ components:
         data:
           type: object
           additionalProperties: true
+      required: [status, data]
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        image_url:
+          type: string
+        category_id:
+          type: string
+          example: cat_01
+        available:
+          type: boolean
+        stock:
+          type: number
+        sku:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        rating:
+          type: number
+        prep_time_minutes:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ProductsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
       required: [status, data]
     ErrorResponse:
       type: object
