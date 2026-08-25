@@ -41,7 +41,7 @@ export default class Services {
       title: 'Transporte de materiales y residuos peligrosos',
       description: 'Unidades de presión y vacío para el manejo de materiales y residuos peligrosos, con permisos vigentes ante SCT y SEMARNAT y personal capacitado para el sector hidrocarburos.',
       image: 'images/fleet/svc-hazmat.jpg',
-      specs: ['UPV 20–30 m³', 'Acero inoxidable', 'Permiso SCT / SEMARNAT'],
+      specs: ['UPV 20–30 m³', 'Acero inoxidable', 'Permiso SCT / SEMARNAT', 'Equipo certificado'],
       cta: 'Cotizar servicio'
     },
     {
