@@ -34,14 +34,12 @@ export default class AboutUs {
     { title: 'Personal capacitado PEMEX', description: 'Personal capacitado para trabajo en locaciones de Pemex y del sector hidrocarburos.' },
     { title: 'Sistemas de gestión SSMA', description: 'Gestión de seguridad, salud y medio ambiente en todas las operaciones.' },
     { title: 'Servicio 24/7/365', description: 'Disponibilidad los 365 días del año, las 24 horas del día.' },
-    { title: 'Unidades aseguradas', description: 'Cobertura de responsabilidad civil ecológica en toda la flotilla.' },
     { title: 'Rastreo satelital', description: 'Unidades monitoreadas por rastreo satelital en tiempo real.' }
   ];
 
   infra: InfraItem[] = [
     { title: 'Oficinas administrativas', description: 'Gestión y coordinación de operaciones.' },
     { title: 'Patio de maniobras', description: 'Espacio para carga, descarga y resguardo de unidades.' },
-    { title: 'Área de mantenimiento', description: 'Mantenimiento propio de la flotilla.' },
-    { title: 'Área de llenado de pipas', description: 'Abastecimiento para el servicio de suministro de agua.' }
+    { title: 'Área de mantenimiento', description: 'Mantenimiento propio de la flotilla.' }
   ];
 }

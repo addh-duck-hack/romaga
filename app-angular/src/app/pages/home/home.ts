@@ -57,7 +57,7 @@ export default class Home {
     {
       id: 4,
       title: 'Suministro de agua',
-      description: 'Pipas de 40 y 45 m³ con permiso vigente ante CONAGUA.',
+      description: 'Pipas de 40 y 45 m³ para abastecimiento de agua potable y no potable.',
       image: 'images/fleet/svc-agua.jpg',
       route: '/servicios'
     }
