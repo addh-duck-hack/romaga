@@ -1,9 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
-import { MailService } from 'src/app/services/mail.service';
+
+type ContactChannel = 'whatsapp' | 'email';
+
+const WHATSAPP_NUMBER = '5217821035684';
+const CONTACT_EMAIL = 'transportes@romaga.com.mx';
 
 @Component({
   selector: 'app-contact-us',
@@ -26,18 +29,16 @@ export default class ContactUs {
   service = signal(this.services[0]);
   message = signal('');
 
-  sending = signal(false);
   descriptionErrors = signal<string[]>([]);
   descriptionSuccess = signal<string>('');
 
-  private mailService = inject(MailService);
-
-  onFormSubmit(event: Event): void {
+  onFormSubmit(event: SubmitEvent): void {
     event.preventDefault();
-    this.submitForm();
+    const submitter = event.submitter as HTMLButtonElement | null;
+    this.submitForm(submitter?.value === 'email' ? 'email' : 'whatsapp');
   }
 
-  submitForm(): void {
+  submitForm(channel: ContactChannel): void {
     this.descriptionErrors.set([]);
     this.descriptionSuccess.set('');
     const errors: string[] = [];
@@ -69,27 +70,28 @@ export default class ContactUs {
       return;
     }
 
-    this.sending.set(true);
-    this.mailService.sendContactEmail({
-      fullName,
-      email,
-      phone: this.phone().trim(),
-      service: this.service(),
+    const phone = this.phone().trim();
+    const body = [
+      `Nombre: ${fullName}`,
+      `Correo: ${email}`,
+      ...(phone ? [`Teléfono: ${phone}`] : []),
+      `Servicio de interés: ${this.service()}`,
+      '',
       message
-    }).subscribe({
-      next: (response) => {
-        this.sending.set(false);
-        this.descriptionSuccess.set(response.message || 'Gracias, hemos recibido su solicitud. Nos pondremos en contacto pronto.');
-        this.fullName.set('');
-        this.email.set('');
-        this.phone.set('');
-        this.service.set(this.services[0]);
-        this.message.set('');
-      },
-      error: (error: HttpErrorResponse) => {
-        this.sending.set(false);
-        this.descriptionErrors.set([error.error?.error?.message ?? 'No se pudo enviar la solicitud. Intenta nuevamente.']);
-      }
-    });
+    ].join('\n');
+
+    const url = channel === 'whatsapp'
+      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola, me gustaría solicitar una cotización.\n\n${body}`)}`
+      : `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Solicitud de cotización - ${fullName}`)}&body=${encodeURIComponent(body)}`;
+
+    if (channel === 'whatsapp') {
+      window.open(url, '_blank', 'noopener');
+    } else {
+      window.location.href = url;
+    }
+
+    this.descriptionSuccess.set(channel === 'whatsapp'
+      ? 'Abrimos WhatsApp con su solicitud. Solo confirme el envío del mensaje.'
+      : 'Abrimos su aplicación de correo con su solicitud. Solo confirme el envío del mensaje.');
   }
 }

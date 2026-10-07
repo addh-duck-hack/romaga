@@ -8,7 +8,3 @@ services:
     restart: always
     ports:
       - 103:80
-  romaga-services:
-    build: ./backend
-    ports:
-      - "104:5000"

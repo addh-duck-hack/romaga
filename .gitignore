@@ -31,12 +31,5 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-#Postmanfiles
-/backend/romaga-postman-collection.json
-
 #Documentos especificos
 CVEmpresarial.pdf
-
-#Scripts
-/backend/scripts/
-mongo.js

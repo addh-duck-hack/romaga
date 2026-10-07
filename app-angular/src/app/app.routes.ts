@@ -18,40 +18,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/services/services')
   },
   {
-    path: 'login',
-    loadComponent: () => import('./auth/login/login')
-  },
-  {
-    path: 'dashboard',
-    loadComponent: () => import('./pages/dashboard/dashboard'),
-    children:[
-      {
-        path: 'home',
-        loadComponent: () => import('./pages/dashboard/home-dashboard/home-dashboard'),
-      },
-      {
-        path: 'price',
-        loadComponent: () => import('./pages/dashboard/price-dashboard/price-dashboard'),
-      },
-      {
-        path: 'history',
-        loadComponent: () => import('./pages/dashboard/history-dashboard/history-dashboard'),
-      },
-      {
-        path: '**',
-        redirectTo: 'home'
-      }
-    ]
-  },
-  {
-    path: 'users/verify',
-    loadComponent: () => import('./auth/validate-email/validate-email')
-  },
-  {
-    path: 'reset-password',
-    loadComponent: () => import('./auth/reset-password/reset-password')
-  },
-  {
     path: '**',
     redirectTo: ''
   }
