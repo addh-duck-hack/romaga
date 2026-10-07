@@ -199,5 +199,9 @@ body {
 .clients-grid { display: grid; grid-template-columns: repeat(6, 1fr); align-items: center; gap: var(--sp-6); }
 @media (max-width: 900px) { .clients-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 520px) { .clients-grid { grid-template-columns: repeat(2, 1fr); } }
-.clients-grid img { max-height: 34px; width: auto; margin-inline: auto; filter: grayscale(1) contrast(.9) opacity(.62); transition: filter .18s ease; }
+.clients-grid img { width: 100%; height: 110px; object-fit: contain; filter: grayscale(1) contrast(.9) opacity(.62); transition: filter .18s ease; }
 .clients-grid img:hover { filter: none; }
+.promo-banner { padding-block: var(--sp-7); border-bottom: 1px solid var(--line); }
+.promo-banner a { display: block; transition: opacity .18s ease; }
+.promo-banner a:hover { opacity: .9; }
+.promo-banner img { display: block; width: 100%; height: auto; }
