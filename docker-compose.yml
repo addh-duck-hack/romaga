@@ -12,6 +12,3 @@ services:
     build: ./backend
     ports:
       - "104:5000"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules

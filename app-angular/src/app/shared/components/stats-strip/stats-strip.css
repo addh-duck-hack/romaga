@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.stats {
+  background: #141311;
+  color: #fff;
+  border-top: 1px solid #2b2822;
+}
+.stats-grid {
+  max-width: 1220px;
+  margin-inline: auto;
+  padding-inline: var(--sp-6);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: #2b2822;
+}
+.stat {
+  background: #141311;
+  padding: var(--sp-6) var(--sp-4);
+}
+.stat b {
+  display: block;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.3rem);
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+.stat span {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #9a968b;
+}
+
+/* Light variant: standalone card grid on a paper background (used inside interior pages) */
+.stats--light {
+  background: transparent;
+  color: var(--fg);
+  border-top: none;
+}
+.stats--light .stats-grid {
+  padding-inline: 0;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.stats--light .stat {
+  background: var(--bg-raised);
+}
+.stats--light .stat b {
+  color: var(--fg);
+}
+.stats--light .stat span {
+  color: var(--fg-soft);
+}
+
+@media (max-width: 760px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}

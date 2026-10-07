@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { environment } from '@environments/environment';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'main-footer',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './main-footer.html',
   styleUrl: './main-footer.css'
 })
 export class MainFooter {
-  env = environment
-  logo = 'images/logo_opcaity.png';
+  logo = 'images/logo_white_nav.png';
+  year = new Date().getFullYear();
 }

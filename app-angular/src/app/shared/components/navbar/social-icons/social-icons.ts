@@ -1,5 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
-import { UserService } from 'src/app/services/user.service';
+import { Component, signal } from '@angular/core';
 import { SocialItem } from 'src/app/shared/interfaces/social-item.interface';
 
 @Component({
@@ -11,18 +10,10 @@ import { SocialItem } from 'src/app/shared/interfaces/social-item.interface';
 export class SocialIcons {
   socialItems = signal<SocialItem[]>([]);
 
-  userService = inject(UserService)
-  sessionActive = this.userService.sessionUser
-
   constructor(){
     this.socialItems.set([
-      { id: 1, name: 'WhatsApp', icon: 'fa-brands fa-whatsapp', url: 'https://wa.me/7717742823', newPage: true },
-      { id: 2, name: 'Twitter', icon: 'fab fa-facebook', url: 'https://twitter.com/romaga', newPage: true }
+      { id: 1, name: 'WhatsApp', icon: 'fa-brands fa-whatsapp', url: 'https://wa.me/5217821035684?text=Hola,%20estoy%20visitando%20su%20sitio%20web%20y%20me%20gustar%C3%ADa%20obtener%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20servicios.', newPage: true },
+      { id: 2, name: 'Facebook', icon: 'fa-brands fa-facebook', url: 'https://facebook.com/romaga', newPage: true }
     ]);
-    if(this.userService.isTokenValid()){
-      this.socialItems.update(items => [...items, { id: 5, name: 'Dashboard', icon: 'fa-solid fa-user', url: '/dashboard', newPage: false }]);
-    }else{
-      this.socialItems.update(items => [...items, { id: 5, name: 'Login', icon: 'fa-solid fa-user', url: '/login', newPage: false }]);
-    }
   }
 }

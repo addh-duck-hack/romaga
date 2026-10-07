@@ -1,9 +1,17 @@
 :host {
   display: block;
 }
-.social-icon{
-  color: #575757;
+
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.social-icon {
+  color: #cfcbc0;
+  transition: color .15s ease;
 }
 .social-icon:hover {
-  color: var(--first-color);
+  color: var(--red-true, var(--red));
 }
