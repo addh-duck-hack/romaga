@@ -79,9 +79,10 @@
               <textarea id="message" [value]="message()" (input)="message.set(txtMessage.value)" #txtMessage required placeholder="Cuéntenos origen, destino y tipo de carga o servicio que necesita."></textarea>
             </div>
           </div>
-          <button class="btn btn-primary" type="submit" [disabled]="sending()">
-            {{ sending() ? 'Enviando…' : 'Enviar solicitud' }}
-          </button>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" value="whatsapp">Enviar por WhatsApp</button>
+            <button class="btn btn-ghost" type="submit" value="email">Enviar por correo</button>
+          </div>
           <p class="form-note">Al enviar este formulario acepta ser contactado por Transportes ROMAGA para dar seguimiento a su solicitud.</p>
         </form>
       </div>

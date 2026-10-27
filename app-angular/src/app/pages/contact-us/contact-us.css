@@ -112,7 +112,7 @@
   outline-offset: 1px;
 }
 
-.form-card .btn { margin-top: var(--sp-5); }
+.form-actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-5); }
 .form-note {
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);

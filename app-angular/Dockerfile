@@ -1,8 +1,10 @@
 # Etapa de construcción
 FROM node:22-slim AS build
 WORKDIR /app
+# Instalar dependencias exactas del lockfile (ng viene de devDependencies)
+COPY ./app-angular/package.json ./app-angular/package-lock.json ./
+RUN npm ci
 COPY ./app-angular/ .
-RUN npm install -g @angular/cli @angular-devkit/build-angular && npm install
 RUN npm run build -- --configuration production
 RUN echo "Verificando archivos en dist:" && ls -la /app/dist/app-angular/browser || echo "No se encontró /app/dist/app-angular/browser"
 
