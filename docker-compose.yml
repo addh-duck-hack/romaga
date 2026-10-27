@@ -5,5 +5,9 @@ services:
       dockerfile: ./app-angular/Dockerfile
     container_name: romaga-angular-container
     restart: always
-    ports:
-      - 103:80
+    networks:
+      - npm
+
+networks:
+  npm:
+    external: true

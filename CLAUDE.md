@@ -23,7 +23,7 @@ ng test                 # Karma/Jasmine unit tests
 ```bash
 docker compose up --build
 ```
-`docker-compose.yml` builds the Angular app and serves it via nginx (`nginx.conf`, SPA fallback to `index.html`) on host port 103.
+`docker-compose.yml` builds the Angular app and serves it via nginx (`nginx.conf`, SPA fallback to `index.html`) on container port 80. No host port is published: the container joins the external `npm` network and Nginx Proxy Manager reaches it by name (`romaga-angular-container:80`).
 
 ## Frontend architecture
 
